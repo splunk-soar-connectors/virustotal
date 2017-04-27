@@ -1,0 +1,193 @@
+{% extends 'widgets/widget_template.html' %}
+{% load custom_template %}
+{% block body_color %}{{ body_color }}{% endblock %}
+{% block body_text_color %}white{% endblock %}
+{% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
+{% block widget_content %}
+
+<!-- 
+File: ./virustotal/virustotal_template.html
+
+Copyright (c) Phantom Cyber Corporation, 2014-2017
+
+This unpublished material is proprietary to Phantom Cyber.
+All rights reserved. The methods and
+techniques described herein are considered trade secrets
+and/or confidential. Reproduction or distribution, in whole
+or in part, is forbidden except by express written permission
+of Phantom Cyber.
+-->
+
+<style>
+
+#virustotal {
+  color: rgb(181, 222, 255);
+}
+
+#virustotal > #headers > div {
+  display: inline-block;
+  text-align: center;
+  font-size: 12px;
+}
+
+#virustotal > #headers {
+  border-bottom: 2px solid rgba(20, 20, 50, .2);
+  padding-bottom: 10px;
+}
+
+#virustotal > #headers > #results {
+  width: 40%;
+}
+
+#virustotal > #headers > #hash {
+  text-align: left;
+  width: calc(60% - (68px * 2) - 30px);
+  padding-left: 10px;
+}
+
+#virustotal > #headers > #detections, #virustotal > #headers > #scanners  {
+  width: 68px;
+}
+
+#virustotal #vt-body > #vt-stats {
+  width: 40%;
+  float: left;
+  padding-top: 15px;
+  padding-right: 15px;
+  padding-left: 10px;
+}
+
+#virustotal #vt-body > #vt-stats > #headline #pct-value {
+  font-size: 44px;
+  text-align: center;
+  font-weight: bold;
+}
+
+#virustotal #vt-body > #vt-stats > #headline #pct-title {
+  font-size: 16px;
+  text-align: center;
+  font-weight: bold;
+  margin-top: -10px;
+}
+
+#virustotal #files {
+  float: right;
+  height: 238px;
+  width: 60%;
+  overflow: auto;
+}
+
+#virustotal #files #vt_results_table .tb-row {
+  font-size: 12px;
+  text-align: left;
+  border-bottom: 1px solid rgba(20, 20, 50, .2);
+}
+
+#virustotal #files #vt_results_table .tb-cell {
+  padding-bottom: 10px;
+  padding-top: 10px;
+  padding-left: 10px;
+  display: inline-block;
+}
+
+#virustotal #other-stats > div {
+  display: inline-block;
+  text-align: center;
+  width: 32%;
+  padding-top: 15px;
+}
+
+#virustotal #other-stats .item-count {
+  font-size: 20px;
+  font-weight: bold;
+}
+
+#virustotal #other-stats > div.vt_middle {
+  border-left: 1px solid rgba(20, 20, 50, .2);
+  border-right: 1px solid rgba(20, 20, 50, .2);
+}
+
+
+.vt-result-hash {
+    width: calc(100% - (68px * 2) - 10px);
+    vertical-align: middle;
+}
+
+.vt-result-count {
+    width: 68px; text-align: center;
+    vertical-align: middle;
+}
+
+.vt-wrapper {
+    width: calc(100% + 5px);
+    height: 100%;
+    margin-left: -5px
+}
+
+.vt-wrapper, .vt-wrapper div{
+  background-color: #0F75BC;
+}
+
+
+</style>
+<script>
+function on_vt_load(caller) {
+  $(caller).find('[data-percentage]').each( function () {
+    $(this).animate( {
+      width: $(this).attr("data-percentage"),
+    });
+  });
+}
+</script>
+<div class="vt-wrapper">
+<div id="virustotal" class="row-fluid p-t-10" onwidgetload="on_vt_load(this);" onwidgetupdate="handle_update(update_data, {{ app.id|default:'' }}, this);">
+  <div id="headers">
+    <div id="results">Results</div>
+    <div id="hash">Hash</div>
+    <div id="detections">Detections</div>
+    <div id="scanners">Scanners</div>
+  </div>
+  <div id="vt-body">
+    <div id="vt-stats">
+      <div id="headline">
+        <div id="large-pct">
+          <div id="pct-value" data-value="{{ parameters.result_summary.3.1.0 }}" animation-duration="700">{{ parameters.result_summary.3.1.0|safe_intcomma }}%</div>
+          <div id="pct-title">{{ parameters.result_summary.3.0|upper }}</div>
+          {% if parameters.percentage %}
+            <div class="progress transparent progress-small no-radius m-t-10 m-b-15" style="width:100%">
+              <div class="progress-bar progress-bar-blue animate-progress-bar" data-percentage="{{ parameters.percentage }}%" style="width: 1%; background-color: rgb(181, 222, 255);"></div>
+            </div>
+          {% endif %}
+        </div>
+      </div>
+      <div id="other-stats">
+        <div>
+          <div class="item-count" data-value="{{ parameters.result_summary.0.1.0 }}" animation-duration="700">{{ parameters.result_summary.0.1.0|safe_intcomma }}</div>
+          <div class="item-title">{{ parameters.result_summary.0.0 }}</div>
+        </div>
+        <div class="vt_middle">
+          <div class="item-count" data-value="{{ parameters.result_summary.1.1.0 }}" animation-duration="700">{{ parameters.result_summary.1.1.0|safe_intcomma }}</div>
+          <div class="item-title">{{ parameters.result_summary.1.0 }}</div>
+        </div>
+        <div>
+          <div class="item-count" data-value="{{ parameters.result_summary.2.1.0 }}" animation-duration="700">{{ parameters.result_summary.2.1.0|safe_intcomma }}</div>
+          <div class="item-title">{{ parameters.result_summary.2.0 }}</div>
+        </div>
+      </div>
+    </div>
+    <div id="files">
+      <div id="vt_results_table">
+        {% for hash, det, scan in results %}
+          <div class="tb-row">
+            <div class="ellipsis tb-cell vt-result-hash">{{ hash|upper }}</div>
+            <div class="tb-cell vt-result-count">{{ det }}</div>
+            <div class="tb-cell vt-result-count">{{ scan }}</div>
+          </div>
+        {% endfor %}
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+
+{% endblock %}
