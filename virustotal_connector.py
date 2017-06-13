@@ -25,12 +25,19 @@ from virustotal_consts import *
 import os
 import re
 import uuid
+import time
 import magic
 import shutil
 import hashlib
 import requests
+from bs4 import BeautifulSoup
 
 requests.packages.urllib3.disable_warnings()
+
+
+class RetVal(tuple):
+    def __new__(cls, val1, val2):
+        return tuple.__new__(RetVal, (val1, val2))
 
 
 class VirustotalConnector(BaseConnector):
@@ -41,6 +48,7 @@ class VirustotalConnector(BaseConnector):
     ACTION_ID_QUERY_DOMAIN = "lookup_domain"
     ACTION_ID_QUERY_IP = "lookup_ip"
     ACTION_ID_GET_FILE = "get_file"
+    ACTION_ID_DETONATE_FILE = "detonate_file"
 
     MAGIC_FORMATS = [
       (re.compile('^PE.* Windows'), ['pe file'], '.exe'),
@@ -57,6 +65,101 @@ class VirustotalConnector(BaseConnector):
         super(VirustotalConnector, self).__init__()
 
         self._apikey = None
+
+    def _process_empty_reponse(self, response, action_result):
+
+        if (200 <= response.status_code < 205):
+            return RetVal(phantom.APP_SUCCESS, {})
+
+        return RetVal(action_result.set_status(phantom.APP_ERROR, "Empty response and no information in the header"), None)
+
+    def _process_html_response(self, response, action_result):
+
+        # An html response, is bound to be an error
+        status_code = response.status_code
+
+        try:
+            soup = BeautifulSoup(response.text, "html.parser")
+            error_text = soup.text
+            split_lines = error_text.split('\n')
+            split_lines = [x.strip() for x in split_lines if x.strip()]
+            error_text = '\n'.join(split_lines)
+        except:
+            error_text = "Cannot parse error details"
+
+        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code,
+                error_text)
+
+        message = message.replace('{', '{{').replace('}', '}}')
+
+        return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
+
+    def _process_json_response(self, r, action_result):
+
+        # Try a json parse
+        try:
+            resp_json = r.json()
+        except Exception as e:
+            self.save_progress('Cannot parse JSON')
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unable to parse response as JSON", e), None)
+
+        if (200 <= r.status_code < 205):
+            return RetVal(phantom.APP_SUCCESS, resp_json)
+
+        action_result.add_data(resp_json)
+        message = r.text.replace('{', '{{').replace('}', '}}')
+        return RetVal( action_result.set_status( phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
+
+    def _process_response(self, r, action_result):
+
+        # store the r_text in debug data, it will get dumped in the logs if an error occurs
+        if hasattr(action_result, 'add_debug_data'):
+            action_result.add_debug_data({'r_status_code': r.status_code})
+            action_result.add_debug_data({'r_text': r.text})
+            action_result.add_debug_data({'r_headers': r.headers})
+
+        # There are just too many differences in the response to handle all of them in the same function
+        if ('json' in r.headers.get('Content-Type', '')):
+            return self._process_json_response(r, action_result)
+
+        if ('html' in r.headers.get('Content-Type', '')):
+            return self._process_html_response(r, action_result)
+
+        # it's not an html or json, handle if it is a successfull empty reponse
+        if (200 <= r.status_code < 205) and (not r.text):
+            return self._process_empty_reponse(r, action_result)
+
+        # everything else is actually an error at this point
+        message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
+                r.status_code, r.text.replace('{', '{{').replace('}', '}}'))
+
+        return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
+
+    def _make_rest_call(self, action_result, endpoint, params={}, body={}, headers={}, files=None, method="get"):
+        """ Returns 2 values, use RetVal """
+
+        config = self.get_config()
+        url = "https://www.virustotal.com/vtapi/v2" + endpoint
+
+        try:
+            request_func = getattr(requests, method)
+        except AttributeError:
+            # Set the action_result status to error, the handler function will most probably return as is
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Unsupported method: {0}".format(method)), None)
+        except Exception as e:
+            # Set the action_result status to error, the handler function will most probably return as is
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Handled exception: {0}".format(str(e))), None)
+
+        try:
+            response = request_func(url, params=params, json=body, headers=headers, files=files, verify=config[phantom.APP_JSON_VERIFY])
+        except Exception as e:
+            # Set the action_result status to error, the handler function will most probably return as is
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting: {0}".format(str(e))), None)
+
+        self.debug_print(response.url)
+        self.debug_print(response.text)
+
+        return self._process_response(response, action_result)
 
     def _query_ip_domain(self, param, object_name, query_url):
 
@@ -206,6 +309,84 @@ class VirustotalConnector(BaseConnector):
         object_name = phantom.APP_JSON_DOMAIN
 
         return self._query_ip_domain(param, object_name, query_url)
+
+    def _update_action_result_for_detonate_file(self, action_result, json_resp):
+        action_result.add_data(json_resp)
+        action_result.update_param({'hash': json_resp.get('sha256', '')})
+
+        # update the summary
+        action_result.update_summary({
+            VIRUSTOTAL_JSON_TOTAL_SCANS: json_resp.get('total', 0),
+            VIRUSTOTAL_JSON_POSITIVES: json_resp.get('positives', 0)
+        })
+        return action_result.set_status(phantom.APP_SUCCESS)
+
+    def _poll_for_result(self, action_result, scan_id, poll_interval, poll_attempts):
+        attempt = 1
+        endpoint = '/file/report'
+        params = {'apikey': self._apikey, 'resource': scan_id}
+        while attempt <= poll_attempts:
+            self.save_progress("Polling attempt {0} of {1}".format(attempt, poll_attempts))
+            ret_val, json_resp = self._make_rest_call(action_result, endpoint, params, method="post")
+            if phantom.is_fail(ret_val):
+                return ret_val
+            self.debug_print(json_resp)
+            if json_resp['response_code'] == 1:
+                return self._update_action_result_for_detonate_file(action_result, json_resp)
+            if json_resp['response_code'] == 0:
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_RESOURCE_NOT_FOUND)
+
+            attempt += 1
+            time.sleep(poll_interval * 60)
+
+        action_result.update_summary({'scan_id': scan_id})
+        return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MAX_POLLS_REACHED)
+
+    def _detonate_file(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+        scan_id = vault_id = None
+        params = {'apikey': self._apikey}
+        try:
+            scan_id = param['scan_id']
+            scan_id = scan_id
+        except KeyError:
+            try:
+                vault_id = param['file_vault_id']
+            except KeyError:
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MISSING_PARAMETERS)
+
+        if vault_id:
+            file_info = Vault.get_file_info(vault_id=vault_id, container_id=self.get_container_id())[0]
+            self.debug_print(file_info)
+            file_path = file_info['path']  # noqa
+            file_name = file_info['name']  # noqa
+            file_sha256 = file_info['metadata']['sha256']
+            params['resource'] = file_sha256
+            ret_val, json_resp = self._make_rest_call(action_result, '/file/report', params=params, method="post")
+            if phantom.is_fail(ret_val):
+                return ret_val
+
+            if json_resp['response_code'] == 1:  # Resource found on server
+                return self._update_action_result_for_detonate_file(action_result, json_resp)
+
+            if json_resp['response_code'] == 0:  # Not found on server
+                files = {'file': (file_name, open(file_path, 'rb'))}
+                params = {'apikey': self._apikey}
+                ret_val, json_resp = self._make_rest_call(action_result, '/file/scan', params=params, files=files, method="post")
+                if phantom.is_fail(ret_val):
+                    return ret_val
+                try:
+                    scan_id = json_resp['scan_id']
+                except KeyError:
+                    return action_result.set_status(phantom.APP_ERROR, "Malformed response object.")
+
+        # These became strings For some reason
+        poll_interval = int(param.get('poll_interval', 5))
+        poll_attempts = int(param.get('poll_attempts', 12))
+        ret_val = self._poll_for_result(action_result, scan_id, poll_interval, poll_attempts)
+
+        return ret_val
 
     def _get_file(self, param):
 
@@ -357,6 +538,8 @@ class VirustotalConnector(BaseConnector):
             result = self._query_ip(param)
         elif (action == self.ACTION_ID_GET_FILE):
             result = self._get_file(param)
+        elif (action == self.ACTION_ID_DETONATE_FILE):
+            result = self._detonate_file(param)
         elif (action == phantom.ACTION_ID_TEST_ASSET_CONNECTIVITY):
             result = self._test_asset_connectivity(param)
 

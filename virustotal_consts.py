@@ -29,6 +29,9 @@ VIRUSTOTAL_SERVER_ERROR_FORBIDDEN = "Server returned error code: {code}. API key
 VIRUSTOTAL_SERVER_ERROR_NOT_FOUND = "Server returned error code: {code}. Requested file not found."
 VIRUSTOTAL_NO_RESPONSE = "Server did not return a response for the object queried"
 VIRUSTOTAL_SERVER_CONNECTION_ERROR = "Server connection error"
+VIRUSTOTAL_MISSING_PARAMETERS = "Missing parameters. At least one of 'scan_id' or 'file_vault_id' required."
+VIRUSTOTAL_RESOURCE_NOT_FOUND = "Resource not found in VirusTotal database"
+VIRUSTOTAL_MAX_POLLS_REACHED = "Reached max polling attempts. Try rerunning the action with the 'scan_id' parameter"
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"
@@ -49,3 +52,4 @@ GET_FILE_API_URL = 'https://www.virustotal.com/vtapi/v2/file/download'
 URL_API_URL = 'https://www.virustotal.com/vtapi/v2/url/report'
 DOMAIN_API_URL = 'https://www.virustotal.com/vtapi/v2/domain/report'
 IP_API_URL = 'https://www.virustotal.com/vtapi/v2/ip-address/report'
+UPLOAD_FILE_URL = 'https://www.virustotal.com/vtapi/v2/file/scan'
