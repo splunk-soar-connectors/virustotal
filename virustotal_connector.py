@@ -48,6 +48,7 @@ class VirustotalConnector(BaseConnector):
     ACTION_ID_QUERY_DOMAIN = "lookup_domain"
     ACTION_ID_QUERY_IP = "lookup_ip"
     ACTION_ID_GET_FILE = "get_file"
+    ACTION_ID_GET_REPORT = "get_report"
     ACTION_ID_DETONATE_FILE = "detonate_file"
 
     MAGIC_FORMATS = [
@@ -322,6 +323,7 @@ class VirustotalConnector(BaseConnector):
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _poll_for_result(self, action_result, scan_id, poll_interval, poll_attempts):
+
         attempt = 1
         endpoint = '/file/report'
         params = {'apikey': self._apikey, 'resource': scan_id}
@@ -345,48 +347,45 @@ class VirustotalConnector(BaseConnector):
     def _detonate_file(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
-        scan_id = vault_id = None
+        # scan_id = vault_id = None
         params = {'apikey': self._apikey}
-        try:
-            scan_id = param['scan_id']
-            scan_id = scan_id
-        except KeyError:
-            try:
-                vault_id = param['file_vault_id']
-            except KeyError:
-                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MISSING_PARAMETERS)
+        vault_id = param['file_vault_id']
 
-        if vault_id:
-            file_info = Vault.get_file_info(vault_id=vault_id, container_id=self.get_container_id())[0]
-            self.debug_print(file_info)
-            file_path = file_info['path']  # noqa
-            file_name = file_info['name']  # noqa
-            file_sha256 = file_info['metadata']['sha256']
-            params['resource'] = file_sha256
-            ret_val, json_resp = self._make_rest_call(action_result, '/file/report', params=params, method="post")
+        file_info = Vault.get_file_info(vault_id=vault_id, container_id=self.get_container_id())[0]
+        self.debug_print(file_info)
+        file_path = file_info['path']  # noqa
+        file_name = file_info['name']  # noqa
+        file_sha256 = file_info['metadata']['sha256']
+        params['resource'] = file_sha256
+
+        ret_val, json_resp = self._make_rest_call(action_result, '/file/report', params=params, method="post")
+        if phantom.is_fail(ret_val):
+            return ret_val
+
+        if json_resp['response_code'] == 1:  # Resource found on server
+            return self._update_action_result_for_detonate_file(action_result, json_resp)
+        if json_resp['response_code'] == 0:  # Not found on server
+            files = {'file': (file_name, open(file_path, 'rb'))}
+            params = {'apikey': self._apikey}
+            ret_val, json_resp = self._make_rest_call(action_result, '/file/scan', params=params, files=files, method="post")
             if phantom.is_fail(ret_val):
                 return ret_val
+            try:
+                scan_id = json_resp['scan_id']
+            except KeyError:
+                return action_result.set_status(phantom.APP_ERROR, "Malformed response object.")
 
-            if json_resp['response_code'] == 1:  # Resource found on server
-                return self._update_action_result_for_detonate_file(action_result, json_resp)
-
-            if json_resp['response_code'] == 0:  # Not found on server
-                files = {'file': (file_name, open(file_path, 'rb'))}
-                params = {'apikey': self._apikey}
-                ret_val, json_resp = self._make_rest_call(action_result, '/file/scan', params=params, files=files, method="post")
-                if phantom.is_fail(ret_val):
-                    return ret_val
-                try:
-                    scan_id = json_resp['scan_id']
-                except KeyError:
-                    return action_result.set_status(phantom.APP_ERROR, "Malformed response object.")
-
-        # These became strings For some reason
         poll_interval = int(param.get('poll_interval', 5))
         poll_attempts = int(param.get('poll_attempts', 12))
-        ret_val = self._poll_for_result(action_result, scan_id, poll_interval, poll_attempts)
+        return self._poll_for_result(action_result, scan_id, poll_interval, poll_attempts)
 
-        return ret_val
+    def _get_report(self, param):
+
+        action_result = self.add_action_result(ActionResult(param))
+        scan_id = param['scan_id']
+        poll_interval = int(param.get('poll_interval', 5))
+        poll_attempts = int(param.get('poll_attempts', 12))
+        return self._poll_for_result(action_result, scan_id, poll_interval, poll_attempts)
 
     def _get_file(self, param):
 
@@ -540,6 +539,8 @@ class VirustotalConnector(BaseConnector):
             result = self._get_file(param)
         elif (action == self.ACTION_ID_DETONATE_FILE):
             result = self._detonate_file(param)
+        elif (action == self.ACTION_ID_GET_REPORT):
+            result = self._get_report(param)
         elif (action == phantom.ACTION_ID_TEST_ASSET_CONNECTIVITY):
             result = self._test_asset_connectivity(param)
 
