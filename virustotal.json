@@ -771,11 +771,10 @@
           }
         },
         "render": {
-          "type": "custom",
+          "title": "GET REPORT",
+          "type": "table",
           "width": 10,
-          "height": 5,
-          "view": "virustotal_view.file_reputation",
-          "title": "GET REPORT"
+          "height": 5
         },
         "output": [
           {
@@ -828,11 +827,15 @@
           },
           {
             "data_path": "action_result.summary.total_scans",
-            "data_type": "numeric"
+            "data_type": "numeric",
+            "column_name": "Total Scans",
+            "column_order": 0
           },
           {
             "data_path": "action_result.summary.positives",
-            "data_type": "numeric"
+            "data_type": "numeric",
+            "column_name": "Positives",
+            "column_order": 1
           },
           {
             "data_path": "action_result.data.*.scans.*.result",
@@ -857,11 +860,6 @@
           {
             "data_path": "action_result.message",
             "data_type": "string"
-          },
-          {
-            "data_path": "action_result.parameter.hash",
-            "data_type": "string",
-            "contains": ["hash", "sha256", "sha1", "md5"]
           },
           {
             "data_path": "action_result.parameter.scan_id",
@@ -891,7 +889,7 @@
         "identifier": "detonate_file",
         "read_only": true,
         "parameters": {
-          "file_vault_id": {
+          "vault_id": {
             "description": "The Vault ID of the file to scan",
             "data_type": "string",
             "primary": true,
@@ -901,11 +899,10 @@
           }
         },
         "render": {
-          "type": "custom",
+          "title": "DETONATE FILE",
+          "type": "table",
           "width": 10,
-          "height": 5,
-          "view": "virustotal_view.file_reputation",
-          "title": "DETONATE FILE"
+          "height": 5
         },
         "output": [
           {
@@ -957,11 +954,15 @@
           },
           {
             "data_path": "action_result.summary.total_scans",
-            "data_type": "numeric"
+            "data_type": "numeric",
+            "column_name": "Total Scans",
+            "column_order": 0
           },
           {
             "data_path": "action_result.summary.positives",
-            "data_type": "numeric"
+            "data_type": "numeric",
+            "column_name": "Positives",
+            "column_order": 1
           },
           {
             "data_path": "action_result.data.*.scans.*.result",
@@ -988,12 +989,7 @@
             "data_type": "string"
           },
           {
-            "data_path": "action_result.parameter.hash",
-            "data_type": "string",
-            "contains": ["hash", "sha256", "sha1", "md5"]
-          },
-          {
-            "data_path": "action_result.parameter.file_vault_id",
+            "data_path": "action_result.parameter.vault_id",
             "data_type": "string",
             "contains": ["vault id"]
           },

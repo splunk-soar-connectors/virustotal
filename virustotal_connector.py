@@ -313,7 +313,6 @@ class VirustotalConnector(BaseConnector):
 
     def _update_action_result_for_detonate_file(self, action_result, json_resp):
         action_result.add_data(json_resp)
-        action_result.update_param({'hash': json_resp.get('sha256', '')})
 
         # update the summary
         action_result.update_summary({
@@ -336,9 +335,9 @@ class VirustotalConnector(BaseConnector):
             if phantom.is_fail(ret_val):
                 return ret_val
             self.debug_print(json_resp)
-            if json_resp['response_code'] == 1:
+            if json_resp.get('response_code') == 1:
                 return self._update_action_result_for_detonate_file(action_result, json_resp)
-            if json_resp['response_code'] == 0:
+            if json_resp.get('response_code') == 0:
                 return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_RESOURCE_NOT_FOUND)
 
             attempt += 1
@@ -352,22 +351,31 @@ class VirustotalConnector(BaseConnector):
         action_result = self.add_action_result(ActionResult(param))
         config = self.get_config()
         params = {'apikey': self._apikey}
-        vault_id = param['file_vault_id']
+        vault_id = param['vault_id']
 
         file_info = Vault.get_file_info(vault_id=vault_id, container_id=self.get_container_id())[0]
         self.debug_print(file_info)
-        file_path = file_info['path']  # noqa
-        file_name = file_info['name']  # noqa
-        file_sha256 = file_info['metadata']['sha256']
+        try:
+            file_path = file_info['path']  # noqa
+            file_name = file_info['name']  # noqa
+            file_sha256 = file_info['metadata']['sha256']
+        except Exception as e:
+            return action_result.set_status("Unable to retrieve file from vault: {0}", e)
+
         params['resource'] = file_sha256
 
         ret_val, json_resp = self._make_rest_call(action_result, '/file/report', params=params, method="post")
         if phantom.is_fail(ret_val):
             return ret_val
 
-        if json_resp['response_code'] == 1:  # Resource found on server
+        try:
+            response_code = json_resp['response_code']
+        except KeyError:
+            return action_result.set_status(phantom.APP_ERROR, "Malformed response object, missing response_code.")
+
+        if response_code == 1:  # Resource found on server
             return self._update_action_result_for_detonate_file(action_result, json_resp)
-        if json_resp['response_code'] == 0:  # Not found on server
+        if response_code == 0:  # Not found on server
             files = {'file': (file_name, open(file_path, 'rb'))}
             params = {'apikey': self._apikey}
             ret_val, json_resp = self._make_rest_call(action_result, '/file/scan', params=params, files=files, method="post")
@@ -376,7 +384,7 @@ class VirustotalConnector(BaseConnector):
             try:
                 scan_id = json_resp['scan_id']
             except KeyError:
-                return action_result.set_status(phantom.APP_ERROR, "Malformed response object.")
+                return action_result.set_status(phantom.APP_ERROR, "Malformed response object, missing scan_id.")
 
         poll_interval = int(config.get('poll_interval', 5))
         return self._poll_for_result(action_result, scan_id, poll_interval)
