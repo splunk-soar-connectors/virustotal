@@ -322,11 +322,14 @@ class VirustotalConnector(BaseConnector):
         })
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _poll_for_result(self, action_result, scan_id, poll_interval, poll_attempts):
+    def _poll_for_result(self, action_result, scan_id, poll_interval):
 
         attempt = 1
         endpoint = '/file/report'
         params = {'apikey': self._apikey, 'resource': scan_id}
+        # Since we sleep 1 minute between each poll, the poll_interval is
+        # equal to the number of attempts
+        poll_attempts = poll_interval
         while attempt <= poll_attempts:
             self.save_progress("Polling attempt {0} of {1}".format(attempt, poll_attempts))
             ret_val, json_resp = self._make_rest_call(action_result, endpoint, params, method="post")
@@ -339,7 +342,7 @@ class VirustotalConnector(BaseConnector):
                 return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_RESOURCE_NOT_FOUND)
 
             attempt += 1
-            time.sleep(poll_interval * 60)
+            time.sleep(60)
 
         action_result.update_summary({'scan_id': scan_id})
         return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MAX_POLLS_REACHED)
@@ -347,7 +350,7 @@ class VirustotalConnector(BaseConnector):
     def _detonate_file(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
-        # scan_id = vault_id = None
+        config = self.get_config()
         params = {'apikey': self._apikey}
         vault_id = param['file_vault_id']
 
@@ -375,17 +378,16 @@ class VirustotalConnector(BaseConnector):
             except KeyError:
                 return action_result.set_status(phantom.APP_ERROR, "Malformed response object.")
 
-        poll_interval = int(param.get('poll_interval', 5))
-        poll_attempts = int(param.get('poll_attempts', 12))
-        return self._poll_for_result(action_result, scan_id, poll_interval, poll_attempts)
+        poll_interval = int(config.get('poll_interval', 5))
+        return self._poll_for_result(action_result, scan_id, poll_interval)
 
     def _get_report(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
+        config = self.get_config()
         scan_id = param['scan_id']
-        poll_interval = int(param.get('poll_interval', 5))
-        poll_attempts = int(param.get('poll_attempts', 12))
-        return self._poll_for_result(action_result, scan_id, poll_interval, poll_attempts)
+        poll_interval = int(config.get('poll_interval', 5))
+        return self._poll_for_result(action_result, scan_id, poll_interval)
 
     def _get_file(self, param):
 

@@ -28,6 +28,13 @@
         "required": true,
         "order": 1,
         "default": true
+      },
+      "poll_interval": {
+        "description": "Minutes between each poll attempt (Default: 5)",
+        "data_type": "numeric",
+        "order": 2,
+        "required": false,
+        "default": 5
       }
     },
     "actions": [
@@ -106,7 +113,8 @@
           },
           {
             "data_path": "action_result.data.*.scan_id",
-            "data_type": "string"
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
           },
           {
             "data_path": "action_result.data.*.verbose_msg",
@@ -226,7 +234,8 @@
           },
           {
             "data_path": "action_result.data.*.scan_id",
-            "data_type": "string"
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
           },
           {
             "data_path": "action_result.data.*.verbose_msg",
@@ -757,25 +766,8 @@
             "data_type": "string",
             "primary": true,
             "order": 0,
-            "required": true
-          },
-          "ph": {
-            "data_type": "ph",
-            "order": 1
-          },
-          "poll_interval": {
-            "description": "Minutes between each poll attempt (Default: 5)",
-            "data_type": "numeric",
-            "order": 2,
-            "required": false,
-            "default": 5
-          },
-          "poll_attempts": {
-            "description": "How many polling attempts to make (Default: 12)",
-            "data_type": "numeric",
-            "order": 3,
-            "required": false,
-            "default": 12
+            "required": true,
+            "contains": ["virustotal scan id"]
           }
         },
         "render": {
@@ -827,7 +819,8 @@
           },
           {
             "data_path": "action_result.data.*.scan_id",
-            "data_type": "string"
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
           },
           {
             "data_path": "action_result.data.*.verbose_msg",
@@ -872,15 +865,8 @@
           },
           {
             "data_path": "action_result.parameter.scan_id",
-            "data_type": "string"
-          },
-          {
-            "data_path": "action_result.parameter.poll_interval",
-            "data_type": "numeric"
-          },
-          {
-            "data_path": "action_result.parameter.poll_attempts",
-            "data_type": "numeric"
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
           },
           {
             "data_path": "summary.total_objects",
@@ -900,7 +886,7 @@
       {
         "action": "detonate file",
         "description": "Upload a file to Virus Total and scan it",
-        "verbose": "If a file has already been uploaded, use the ID returned from the previous command to see if the scan has finished. At least one of the two parameters needs to present, and the file will be ignored if a scan ID is provided.",
+        "verbose": "If a file has already been uploaded, use the ID returned from the previous command to see if the scan has finished.",
         "type": "investigate",
         "identifier": "detonate_file",
         "read_only": true,
@@ -910,25 +896,8 @@
             "data_type": "string",
             "primary": true,
             "order": 0,
-            "required": true
-          },
-          "ph": {
-            "data_type": "ph",
-            "order": 1
-          },
-          "poll_interval": {
-            "description": "Minutes between each poll attempt (Default: 5)",
-            "data_type": "numeric",
-            "order": 2,
-            "required": false,
-            "default": 5
-          },
-          "poll_attempts": {
-            "description": "How many polling attempts to make (Default: 12)",
-            "data_type": "numeric",
-            "order": 3,
-            "required": false,
-            "default": 12
+            "required": true,
+            "contains": ["vault id"]
           }
         },
         "render": {
@@ -1025,15 +994,8 @@
           },
           {
             "data_path": "action_result.parameter.file_vault_id",
-            "data_type": "string"
-          },
-          {
-            "data_path": "action_result.parameter.poll_interval",
-            "data_type": "numeric"
-          },
-          {
-            "data_path": "action_result.parameter.poll_attempts",
-            "data_type": "numeric"
+            "data_type": "string",
+            "contains": ["vault id"]
           },
           {
             "data_path": "summary.total_objects",
