@@ -1,7 +1,7 @@
 {
     "appid"    : "11f676a4-f3d4-4db0-8587-f4e942c07c7c",
     "name"   : "VirusTotal",
-    "description": "This App implements <b>investigative</b> and <b>reputation</b> actions for querying the VirusTotal cloud",
+    "description": "This app integrates with the VirusTotal cloud to implement <b>investigative</b> and <b>reputation</b> actions",
     "type": "reputation",
     "main_module": "virustotal_connector.pyc",
     "app_version": "1.2.33",
