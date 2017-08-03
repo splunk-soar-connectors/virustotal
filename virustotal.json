@@ -883,7 +883,7 @@
       },
       {
         "action": "detonate file",
-        "description": "Upload a file to Virus Total and scan it",
+        "description": "Upload a file to Virus Total and retrieve the analysis results",
         "verbose": "If a file has already been uploaded, use the ID returned from the previous command to see if the scan has finished.",
         "type": "investigate",
         "identifier": "detonate_file",
