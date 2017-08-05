@@ -160,6 +160,9 @@ class VirustotalConnector(BaseConnector):
         self.debug_print(response.url)
         self.debug_print(response.text)
 
+        if response.status_code == 204:
+            return RetVal(action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
+
         return self._process_response(response, action_result)
 
     def _query_ip_domain(self, param, object_name, query_url):

@@ -884,7 +884,7 @@
       {
         "action": "detonate file",
         "description": "Upload a file to Virus Total and retrieve the analysis results",
-        "verbose": "If a file has already been uploaded, use the ID returned from the previous command to see if the scan has finished.",
+        "verbose": "<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.",
         "type": "investigate",
         "identifier": "detonate_file",
         "read_only": true,
@@ -946,7 +946,8 @@
           },
           {
             "data_path": "action_result.data.*.scan_id",
-            "data_type": "string"
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
           },
           {
             "data_path": "action_result.data.*.verbose_msg",
@@ -992,6 +993,11 @@
             "data_path": "action_result.parameter.vault_id",
             "data_type": "string",
             "contains": ["vault id"]
+          },
+          {
+            "data_path": "action_result.summary.scan_id",
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
           },
           {
             "data_path": "summary.total_objects",
