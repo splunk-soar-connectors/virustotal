@@ -32,8 +32,6 @@ import hashlib
 import requests
 from bs4 import BeautifulSoup
 
-requests.packages.urllib3.disable_warnings()
-
 
 class RetVal(tuple):
     def __new__(cls, val1, val2):
