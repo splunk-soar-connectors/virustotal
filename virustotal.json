@@ -9,7 +9,7 @@
     "product_vendor": "VirusTotal",
     "product_name": "VirusTotal",
     "product_version_regex": ".*",
-    "min_phantom_version": "2.1.478",
+    "min_phantom_version": "3.0.190",
     "publisher": "Phantom",
     "package_name": "phantom_virustotal",
     "logo": "virustotal-logo.png",
