@@ -1,7 +1,5 @@
 {% extends 'widgets/widget_template.html' %}
 {% load custom_template %}
-{% block body_color %}{{ body_color }}{% endblock %}
-{% block body_text_color %}white{% endblock %}
 {% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
 {% block widget_content %}
 
@@ -21,7 +19,6 @@ of Phantom Cyber.
 <style>
 
 #virustotal {
-  color: rgb(181, 222, 255);
 }
 
 #virustotal > #headers > div {
@@ -125,7 +122,6 @@ of Phantom Cyber.
 }
 
 .vt-wrapper, .vt-wrapper div{
-  background-color: #0F75BC;
 }
 
 
@@ -155,7 +151,6 @@ function on_vt_load(caller) {
           <div id="pct-title">{{ parameters.result_summary.3.0|upper }}</div>
           {% if parameters.percentage %}
             <div class="progress transparent progress-small no-radius m-t-10 m-b-15" style="width:100%">
-              <div class="progress-bar progress-bar-blue animate-progress-bar" data-percentage="{{ parameters.percentage }}%" style="width: 1%; background-color: rgb(181, 222, 255);"></div>
             </div>
           {% endif %}
         </div>
