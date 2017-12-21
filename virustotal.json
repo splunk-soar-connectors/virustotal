@@ -1,1105 +1,1018 @@
 {
-    "appid": "11f676a4-f3d4-4db0-8587-f4e942c07c7c",
-    "name": "VirusTotal",
+    "appid"    : "11f676a4-f3d4-4db0-8587-f4e942c07c7c",
+    "name"   : "VirusTotal",
     "description": "This app integrates with the VirusTotal cloud to implement <b>investigative</b> and <b>reputation</b> actions",
     "type": "reputation",
     "main_module": "virustotal_connector.pyc",
-    "app_version": "1.2.40",
-    "utctime_updated": "2017-12-21T03:25:37.000000Z",
+    "app_version": "1.2.37",
+    "utctime_updated": "2017-08-10T00:13:46.000000Z",
     "product_vendor": "VirusTotal",
     "product_name": "VirusTotal",
     "product_version_regex": ".*",
     "min_phantom_version": "3.0.190",
     "publisher": "Phantom",
     "package_name": "phantom_virustotal",
-    "logo": "logo_virustotal.svg",
-    "logo_dark": "logo_virustotal_dark.svg",
+    "logo": "virustotal-logo.png",
     "license": "Copyright (c) Phantom Cyber Corporation 2015-2017",
     "consolidate_widgets": false,
     "configuration": {
-        "apikey": {
-            "data_type": "string",
-            "order": 0,
-            "description": "VirusTotal API key",
-            "required": true
-        },
-        "verify_server_cert": {
-            "data_type": "boolean",
-            "description": "Verify server certificate",
-            "required": true,
-            "order": 1,
-            "default": true
-        },
-        "poll_interval": {
-            "description": "Minutes between each poll attempt (Default: 5)",
-            "data_type": "numeric",
-            "order": 2,
-            "required": false,
-            "default": 5
-        }
+      "apikey" : {
+        "data_type": "string",
+        "order": 0,
+        "description": "VirusTotal API key",
+        "required": true
+      },
+      "verify_server_cert": {
+        "data_type": "boolean",
+        "description": "Verify server certificate",
+        "required": true,
+        "order": 1,
+        "default": true
+      },
+      "poll_interval": {
+        "description": "Minutes between each poll attempt (Default: 5)",
+        "data_type": "numeric",
+        "order": 2,
+        "required": false,
+        "default": 5
+      }
     },
     "actions": [
-        {
-            "action": "test connectivity",
-            "description": "Validate the asset configuration for connectivity.",
-            "type": "test",
-            "identifier": "test_asset_connectivity",
-            "read_only": true,
-            "lock": {
-                "enabled": false
-            },
-            "parameters": {},
-            "output": [],
-            "versions": "EQ(*)"
+      {
+        "action": "test connectivity",
+        "description": "Validate the asset configuration for connectivity.",
+        "type": "test",
+        "identifier": "test_asset_connectivity",
+        "read_only": true,
+        "lock": {
+          "enabled": false
         },
-        {
-            "action": "file reputation",
-            "description": "Queries VirusTotal for file reputation info.",
-            "type": "investigate",
-            "identifier": "lookup_file",
-            "read_only": true,
-            "lock": {
-                "enabled": false
-            },
-            "parameters": {
-                "hash": {
-                    "description": "File hash to query",
-                    "data_type": "string",
-                    "order": 0,
-                    "contains": [
-                        "hash",
-                        "sha256",
-                        "sha1",
-                        "md5"
-                    ],
-                    "primary": true,
-                    "required": true
-                }
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.hash",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256",
-                        "sha1",
-                        "md5"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.md5",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "md5"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.permalink",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.resource",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.response_code",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scan_date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scan_id",
-                    "data_type": "string",
-                    "contains": [
-                        "virustotal scan id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.detected",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.result",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.update",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.version",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.sha1",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sha256",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.total",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_positives",
-                    "data_type": "numeric"
-                }
-            ],
-            "versions": "EQ(*)",
-            "render": {
-                "type": "custom",
-                "width": 10,
-                "height": 5,
-                "view": "virustotal_view.file_reputation",
-                "title": "FILE REPUTATION"
-            }
+        "parameters": {
         },
-        {
-            "action": "url reputation",
-            "description": "Queries VirusTotal for URL info.",
-            "type": "investigate",
-            "identifier": "lookup_url",
-            "read_only": true,
-            "lock": {
-                "enabled": false
-            },
-            "parameters": {
-                "url": {
-                    "description": "URL to query",
-                    "data_type": "string",
-                    "order": 0,
-                    "contains": [
-                        "url"
-                    ],
-                    "primary": true,
-                    "required": true
-                }
-            },
-            "render": {
-                "type": "table",
-                "width": 10,
-                "height": 5,
-                "title": "Url Reputation"
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.url",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.permalink",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.resource",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ],
-                    "column_name": "Url",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.response_code",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scan_date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scan_id",
-                    "data_type": "string",
-                    "contains": [
-                        "virustotal scan id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.detected",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.result",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.total",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.url",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.detections",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.summary.found",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.summary.positives",
-                    "data_type": "numeric",
-                    "column_name": "Positives",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric",
-                    "column_name": "Total Scans",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_positives",
-                    "data_type": "numeric"
-                }
-            ],
-            "versions": "EQ(*)"
+        "output": [],
+        "versions":"EQ(*)"
+      },
+      {
+        "action": "file reputation",
+        "description": "Queries VirusTotal for file reputation info.",
+        "type": "investigate",
+        "identifier": "lookup_file",
+        "read_only": true,
+        "lock": {
+          "enabled": false
         },
-        {
-            "action": "domain reputation",
-            "description": "Queries VirusTotal for domain info.",
-            "type": "investigate",
-            "identifier": "lookup_domain",
-            "read_only": true,
-            "lock": {
-                "enabled": false
-            },
-            "parameters": {
-                "domain": {
-                    "description": "Domain to query",
-                    "data_type": "string",
-                    "order": 0,
-                    "contains": [
-                        "domain"
-                    ],
-                    "primary": true,
-                    "required": true
-                }
-            },
-            "render": {
-                "type": "table",
-                "width": 12,
-                "height": 5,
-                "title": "Domain Reputation"
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.domain",
-                    "data_type": "string",
-                    "contains": [
-                        "domain"
-                    ],
-                    "column_name": "Domain",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.Alexa category",
-                    "data_type": "string",
-                    "column_name": "Alexa category",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.Alexa domain info",
-                    "data_type": "string",
-                    "column_name": "Alexa domain info",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.data.*.Alexa rank",
-                    "data_type": "numeric",
-                    "column_name": "Alexa rank",
-                    "column_order": 3
-                },
-                {
-                    "data_path": "action_result.data.*.BitDefender category",
-                    "data_type": "string",
-                    "column_name": "Bitdefender category",
-                    "column_order": 5
-                },
-                {
-                    "data_path": "action_result.data.*.BitDefender domain info",
-                    "data_type": "string",
-                    "column_name": "Bitdefender domain info",
-                    "column_order": 15
-                },
-                {
-                    "data_path": "action_result.data.*.Dr&2e;Web category",
-                    "data_type": "string",
-                    "column_name": "Dr. Web category",
-                    "column_order": 16
-                },
-                {
-                    "data_path": "action_result.data.*.Malwarebytes hpHosts info",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.Opera domain info",
-                    "data_type": "string",
-                    "column_name": "Opera domain info",
-                    "column_order": 6
-                },
-                {
-                    "data_path": "action_result.data.*.TrendMicro category",
-                    "data_type": "string",
-                    "column_name": "Trendmicro category",
-                    "column_order": 7
-                },
-                {
-                    "data_path": "action_result.data.*.WOT domain info.Child safety",
-                    "data_type": "string",
-                    "column_name": "Child safety",
-                    "column_order": 8
-                },
-                {
-                    "data_path": "action_result.data.*.WOT domain info.Privacy",
-                    "data_type": "string",
-                    "column_name": "Privacy",
-                    "column_order": 9
-                },
-                {
-                    "data_path": "action_result.data.*.WOT domain info.Trustworthiness",
-                    "data_type": "string",
-                    "column_name": "Trustworthiness",
-                    "column_order": 10
-                },
-                {
-                    "data_path": "action_result.data.*.WOT domain info.Vendor reliability",
-                    "data_type": "string",
-                    "column_name": "Vendor reliability",
-                    "column_order": 11
-                },
-                {
-                    "data_path": "action_result.data.*.Websense ThreatSeeker category",
-                    "data_type": "string",
-                    "column_name": "Websense threatseeker category",
-                    "column_order": 12
-                },
-                {
-                    "data_path": "action_result.data.*.Webutation domain info.Adult content",
-                    "data_type": "string",
-                    "column_name": "Adult content",
-                    "column_order": 13
-                },
-                {
-                    "data_path": "action_result.data.*.Webutation domain info.Safety score",
-                    "data_type": "numeric",
-                    "column_name": "Safety score",
-                    "column_order": 14
-                },
-                {
-                    "data_path": "action_result.data.*.Webutation domain info.Verdict",
-                    "data_type": "string",
-                    "column_name": "Webutation Info Verdict",
-                    "column_order": 4
-                },
-                {
-                    "data_path": "action_result.data.*.categories",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.scan_date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.total",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.url",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.resolutions.*.ip_address",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.resolutions.*.last_resolved",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.response_code",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.subdomains",
-                    "data_type": "string",
-                    "contains": [
-                        "domain"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.whois",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.whois_timestamp",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.summary.alexa_rank",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.summary.communicating_samples",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.summary.detected_urls",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.summary.downloaded_samples",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_positives",
-                    "data_type": "numeric"
-                }
-            ],
-            "versions": "EQ(*)"
+        "parameters": {
+          "hash": {
+            "description": "File hash to query",
+            "data_type": "string",
+            "order": 0,
+            "contains": ["hash", "sha256", "sha1", "md5"],
+            "primary": true,
+            "required": true
+          }
         },
-        {
-            "action": "ip reputation",
-            "description": "Queries VirusTotal for IP info.",
-            "type": "investigate",
-            "identifier": "lookup_ip",
-            "read_only": true,
-            "lock": {
-                "enabled": false
-            },
-            "parameters": {
-                "ip": {
-                    "description": "IP to query",
-                    "data_type": "string",
-                    "order": 0,
-                    "contains": [
-                        "ip"
-                    ],
-                    "primary": true,
-                    "required": true
-                }
-            },
-            "render": {
-                "type": "table",
-                "width": 12,
-                "height": 5,
-                "title": "IP Reputation"
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.ip",
-                    "data_type": "string",
-                    "contains": [
-                        "ip"
-                    ],
-                    "column_name": "Ip",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.data.*.as_owner",
-                    "data_type": "string",
-                    "column_name": "As Owner",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.data.*.asn",
-                    "data_type": "string",
-                    "column_name": "Asn",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.data.*.country",
-                    "data_type": "string",
-                    "column_name": "Country",
-                    "column_order": 3
-                },
-                {
-                    "data_path": "action_result.data.*.detected_communicating_samples.*.date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_communicating_samples.*.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_communicating_samples.*.sha256",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_communicating_samples.*.total",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.scan_date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.total",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.url",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.resolutions.*.hostname",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.resolutions.*.last_resolved",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.response_code",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.undetected_downloaded_samples.*.date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.undetected_downloaded_samples.*.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.undetected_downloaded_samples.*.sha256",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.undetected_downloaded_samples.*.total",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.communicating_samples",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.summary.downloaded_samples",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_positives",
-                    "data_type": "numeric"
-                }
-            ],
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "get file",
-            "description": "Downloads a file from VirusTotal, and adds it to the vault.",
-            "type": "investigate",
-            "identifier": "get_file",
-            "read_only": true,
-            "parameters": {
-                "hash": {
-                    "description": "Hash of file to get",
-                    "data_type": "string",
-                    "order": 0,
-                    "contains": [
-                        "hash",
-                        "sha256",
-                        "sha1",
-                        "md5"
-                    ],
-                    "primary": true,
-                    "required": true
-                }
-            },
-            "render": {
-                "type": "table",
-                "width": 12,
-                "height": 5,
-                "title": "Get File"
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.hash",
-                    "data_type": "string",
-                    "column_name": "Hash",
-                    "column_order": 1,
-                    "contains": [
-                        "hash",
-                        "sha256",
-                        "sha1",
-                        "md5"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.file_type",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.name",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.vault_id",
-                    "data_type": "string",
-                    "contains": [
-                        "vault id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.file_type",
-                    "data_type": "string",
-                    "column_name": "File Type",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.summary.name",
-                    "data_type": "string",
-                    "column_name": "File Name",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.summary.vault_id",
-                    "data_type": "string",
-                    "column_name": "Vault ID",
-                    "column_order": 3,
-                    "contains": [
-                        "vault id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_positives",
-                    "data_type": "numeric"
-                }
-            ],
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "get report",
-            "description": "Get the results using the scan id from a detonate file action",
-            "type": "investigate",
-            "identifier": "get_report",
-            "read_only": true,
-            "parameters": {
-                "scan_id": {
-                    "description": "Scan ID",
-                    "data_type": "string",
-                    "primary": true,
-                    "order": 0,
-                    "required": true,
-                    "contains": [
-                        "virustotal scan id"
-                    ]
-                }
-            },
-            "render": {
-                "title": "GET REPORT",
-                "type": "table",
-                "width": 10,
-                "height": 5
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.scan_id",
-                    "data_type": "string",
-                    "contains": [
-                        "virustotal scan id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.md5",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "md5"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.permalink",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.resource",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.response_code",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scan_date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scan_id",
-                    "data_type": "string",
-                    "contains": [
-                        "virustotal scan id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.detected",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.result",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.update",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.version",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.sha1",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sha256",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.total",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.positives",
-                    "data_type": "numeric",
-                    "column_name": "Positives",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric",
-                    "column_name": "Total Scans",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_positives",
-                    "data_type": "numeric"
-                }
-            ],
-            "versions": "EQ(*)"
-        },
-        {
-            "action": "detonate file",
-            "description": "Upload a file to Virus Total and retrieve the analysis results",
-            "verbose": "<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.",
-            "type": "investigate",
-            "identifier": "detonate_file",
-            "read_only": true,
-            "parameters": {
-                "vault_id": {
-                    "description": "The Vault ID of the file to scan",
-                    "data_type": "string",
-                    "primary": true,
-                    "order": 0,
-                    "required": true,
-                    "contains": [
-                        "vault id"
-                    ]
-                }
-            },
-            "render": {
-                "title": "DETONATE FILE",
-                "type": "table",
-                "width": 10,
-                "height": 5
-            },
-            "output": [
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.vault_id",
-                    "data_type": "string",
-                    "contains": [
-                        "vault id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.md5",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "md5"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.permalink",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.positives",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.resource",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.response_code",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scan_date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scan_id",
-                    "data_type": "string",
-                    "contains": [
-                        "virustotal scan id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.detected",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.result",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.update",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.version",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.sha1",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sha256",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.total",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.positives",
-                    "data_type": "numeric",
-                    "column_name": "Positives",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.summary.scan_id",
-                    "data_type": "string",
-                    "contains": [
-                        "virustotal scan id"
-                    ]
-                },
-                {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric",
-                    "column_name": "Total Scans",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "summary.total_objects",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_objects_successful",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "summary.total_positives",
-                    "data_type": "numeric"
-                }
-            ],
-            "versions": "EQ(*)"
+        "output": [
+          {
+            "data_path": "action_result.data.*.permalink",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.sha1",
+            "data_type": "string",
+            "contains": [ "hash", "sha1" ]
+          },
+          {
+            "data_path": "action_result.data.*.sha256",
+            "data_type": "string",
+            "contains": [ "hash", "sha256" ]
+          },
+          {
+            "data_path": "action_result.data.*.md5",
+            "data_type": "string",
+            "contains": [ "hash", "md5" ]
+          },
+          {
+            "data_path": "action_result.data.*.total",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.resource",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.response_code",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scan_date",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scan_id",
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
+          },
+          {
+            "data_path": "action_result.data.*.verbose_msg",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.summary.total_scans",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.summary.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.result",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.update",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.version",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.detected",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.message",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.parameter.hash",
+            "data_type": "string",
+            "contains": ["hash", "sha256", "sha1", "md5"]
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions": "EQ(*)",
+        "render": {
+          "type": "custom",
+          "width": 10,
+          "height": 5,
+          "view": "virustotal_view.file_reputation",
+          "title": "FILE REPUTATION"
         }
+      },
+      {
+        "action": "url reputation",
+        "description": "Queries VirusTotal for URL info.",
+        "type": "investigate",
+        "identifier":"lookup_url",
+        "read_only": true,
+        "lock": {
+          "enabled": false
+        },
+        "parameters": {
+          "url": {
+            "description": "URL to query",
+            "data_type": "string",
+            "order": 0,
+            "contains": ["url"],
+            "primary": true,
+            "required": true
+          }
+        },
+        "render": {
+          "type": "table",
+          "width": 10,
+          "height": 5,
+          "title": "Url Reputation"
+        },
+        "output":[
+          {
+            "data_path": "action_result.data.*.permalink",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.total",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.resource",
+            "data_type": "string",
+            "contains": ["url"],
+            "column_name": "Url",
+            "column_order": 0
+          },
+          {
+            "data_path": "action_result.data.*.response_code",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scan_date",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scan_id",
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
+          },
+          {
+            "data_path": "action_result.data.*.verbose_msg",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.detected",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.result",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.summary.found",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.summary.detections",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.summary.total_scans",
+            "data_type": "numeric",
+            "column_name": "Total Scans",
+            "column_order": 1
+          },
+          {
+            "data_path": "action_result.summary.positives",
+            "data_type": "numeric",
+            "column_name": "Positives",
+            "column_order": 2
+          },
+          {
+            "data_path": "action_result.data.*.url",
+            "data_type": "string",
+            "contains": ["url"]
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.message",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.parameter.url",
+            "data_type": "string",
+            "contains": [ "url" ]
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions": "EQ(*)"
+      },
+      {
+        "action": "domain reputation",
+        "description": "Queries VirusTotal for domain info.",
+        "type": "investigate",
+        "identifier":"lookup_domain",
+        "read_only": true,
+        "lock": {
+          "enabled": false
+        },
+        "parameters": {
+          "domain": {
+            "description": "Domain to query",
+            "data_type": "string",
+            "order": 0,
+            "contains": ["domain"],
+            "primary": true,
+            "required": true
+          }
+        },
+        "render": {
+          "type": "table",
+          "width": 12,
+          "height": 5,
+          "title": "Domain Reputation"
+        },
+        "output": [
+          {
+            "data_path": "action_result.parameter.domain",
+            "data_type": "string",
+            "contains": [ "domain" ],
+            "column_name": "Domain",
+            "column_order": 0 
+          },
+          {
+            "data_path": "action_result.data.*.Alexa category",
+            "data_type": "string",
+            "column_name": "Alexa category",
+            "column_order": 1
+          },
+          {
+            "data_path": "action_result.data.*.Alexa domain info",
+            "data_type": "string",
+            "column_name": "Alexa domain info",
+            "column_order": 2
+          },
+          {
+            "data_path": "action_result.data.*.Alexa rank",
+            "data_type": "numeric",
+            "column_name": "Alexa rank",
+            "column_order": 3
+          },
+          {
+            "data_path": "action_result.data.*.Webutation domain info.Verdict",
+            "data_type": "string",
+            "column_name": "Webutation Info Verdict",
+            "column_order": 4
+          },
+          {
+            "data_path": "action_result.data.*.BitDefender category",
+            "data_type": "string",
+            "column_name": "Bitdefender category",
+            "column_order": 5
+          },
+          {
+            "data_path": "action_result.data.*.Opera domain info",
+            "data_type": "string",
+            "column_name": "Opera domain info",
+            "column_order": 6
+          },
+          {
+            "data_path": "action_result.data.*.TrendMicro category",
+            "data_type": "string",
+            "column_name": "Trendmicro category",
+            "column_order": 7
+          },
+          {
+            "data_path": "action_result.data.*.WOT domain info.Child safety",
+            "data_type": "string",
+            "column_name": "Child safety",
+            "column_order": 8
+          },
+          {
+            "data_path": "action_result.data.*.WOT domain info.Privacy",
+            "data_type": "string",
+            "column_name": "Privacy",
+            "column_order": 9
+          },
+          {
+            "data_path": "action_result.data.*.WOT domain info.Trustworthiness",
+            "data_type": "string",
+            "column_name": "Trustworthiness",
+            "column_order": 10
+          },
+          {
+            "data_path": "action_result.data.*.WOT domain info.Vendor reliability",
+            "data_type": "string",
+            "column_name": "Vendor reliability",
+            "column_order": 11
+          },
+          {
+            "data_path": "action_result.data.*.Websense ThreatSeeker category",
+            "data_type": "string",
+            "column_name": "Websense threatseeker category",
+            "column_order": 12
+          },
+          {
+            "data_path": "action_result.data.*.Webutation domain info.Adult content",
+            "data_type": "string",
+            "column_name": "Adult content",
+            "column_order": 13
+          },
+          {
+            "data_path": "action_result.data.*.Webutation domain info.Safety score",
+            "data_type": "numeric",
+            "column_name": "Safety score",
+            "column_order": 14
+          },
+          {
+            "data_path": "action_result.data.*.BitDefender domain info",
+            "data_type": "string",
+            "column_name": "Bitdefender domain info",
+            "column_order": 15
+          },
+          {
+            "data_path": "action_result.data.*.Dr&2e;Web category",
+            "data_type": "string",
+            "column_name": "Dr. Web category",
+            "column_order": 16
+          },
+          {
+            "data_path": "action_result.summary.downloaded_samples",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.summary.detected_urls",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.summary.alexa_rank",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.summary.communicating_samples",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.whois",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.categories",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.subdomains",
+            "data_type": "string",
+            "contains": [ "domain" ]
+          },
+          {
+            "data_path": "action_result.data.*.resolutions.*.ip_address",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.resolutions.*.last_resolved",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.verbose_msg",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.detected_urls.*.url",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.detected_urls.*.total",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.detected_urls.*.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.detected_urls.*.scan_date",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.response_code",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.whois_timestamp",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.Malwarebytes hpHosts info",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.message",
+            "data_type": "string"
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions": "EQ(*)"
+      },
+      {
+        "action": "ip reputation",
+        "description": "Queries VirusTotal for IP info.",
+        "type": "investigate",
+        "identifier":"lookup_ip",
+        "read_only": true,
+        "lock": {
+          "enabled": false
+        },
+        "parameters": {
+          "ip": {
+            "description": "IP to query",
+            "data_type": "string",
+            "order": 0,
+            "contains": ["ip"],
+            "primary": true,
+            "required": true
+          }
+        },
+        "render": {
+          "type": "table",
+          "width": 12,
+          "height": 5,
+          "title": "IP Reputation"
+        },
+        "output": [
+          {
+            "data_path": "action_result.parameter.ip",
+            "data_type": "string",
+            "contains": [ "ip" ],
+            "column_name": "Ip",
+            "column_order": 0
+          },
+          {
+            "data_path": "action_result.data.*.as_owner",
+            "data_type": "string",
+            "column_name": "As Owner",
+            "column_order": 1
+          },
+          {
+            "data_path": "action_result.data.*.asn",
+            "data_type": "string",
+            "column_name": "Asn",
+            "column_order": 2
+          },
+          {
+            "data_path": "action_result.data.*.country",
+            "data_type": "string",
+            "column_name": "Country",
+            "column_order": 3
+          },
+          {
+            "data_path": "action_result.summary.downloaded_samples",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.summary.communicating_samples",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.resolutions.*.hostname",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.resolutions.*.last_resolved",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.verbose_msg",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.detected_urls.*.url",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.detected_urls.*.total",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.detected_urls.*.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.detected_urls.*.scan_date",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.response_code",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.undetected_downloaded_samples.*.date",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.undetected_downloaded_samples.*.total",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.undetected_downloaded_samples.*.sha256",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.undetected_downloaded_samples.*.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.detected_communicating_samples.*.date",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.detected_communicating_samples.*.total",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.detected_communicating_samples.*.sha256",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.detected_communicating_samples.*.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.message",
+            "data_type": "string"
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions": "EQ(*)"
+      },
+      {
+        "action": "get file",
+        "description": "Downloads a file from VirusTotal, and adds it to the vault.",
+        "type": "investigate",
+        "identifier": "get_file",
+        "read_only": true,
+        "parameters": {
+          "hash": {
+            "description": "Hash of file to get",
+            "data_type": "string",
+            "order": 0,
+            "contains": ["hash", "sha256", "sha1", "md5"],
+            "primary": true,
+            "required": true
+          }
+        },
+        "render": {
+          "type": "table",
+          "width": 12,
+          "height": 5,
+          "title": "Get File"
+        },
+        "output": [
+          {
+            "data_path": "action_result.data.*.name",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.vault_id",
+            "data_type": "string",
+            "contains": [ "vault id" ]
+          },
+          {
+            "data_path": "action_result.data.*.file_type",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.message",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.summary.name",
+            "data_type": "string",
+            "column_name": "File Name",
+            "column_order": 0
+          },
+          {
+            "data_path": "action_result.summary.vault_id",
+            "data_type": "string",
+            "column_name": "Vault ID",
+            "column_order": 3,
+            "contains": [ "vault id" ]
+          },
+          {
+            "data_path": "action_result.summary.file_type",
+            "data_type": "string",
+            "column_name": "File Type",
+            "column_order": 2
+          },
+          {
+            "data_path": "action_result.parameter.hash",
+            "data_type": "string",
+            "column_name": "Hash",
+            "column_order": 1,
+            "contains": ["hash", "sha256", "sha1", "md5"]
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions": "EQ(*)"
+      },
+      {
+        "action": "get report",
+        "description": "Get the results using the scan id from a detonate file action",
+        "type": "investigate",
+        "identifier": "get_report",
+        "read_only": true,
+        "parameters": {
+          "scan_id": {
+            "description": "Scan ID",
+            "data_type": "string",
+            "primary": true,
+            "order": 0,
+            "required": true,
+            "contains": ["virustotal scan id"]
+          }
+        },
+        "render": {
+          "title": "GET REPORT",
+          "type": "table",
+          "width": 10,
+          "height": 5
+        },
+        "output": [
+          {
+            "data_path": "action_result.data.*.permalink",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.sha1",
+            "data_type": "string",
+            "contains": [ "hash", "sha1" ]
+          },
+          {
+            "data_path": "action_result.data.*.sha256",
+            "data_type": "string",
+            "contains": [ "hash", "sha256" ]
+          },
+          {
+            "data_path": "action_result.data.*.md5",
+            "data_type": "string",
+            "contains": [ "hash", "md5" ]
+          },
+          {
+            "data_path": "action_result.data.*.total",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.resource",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.response_code",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scan_date",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scan_id",
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
+          },
+          {
+            "data_path": "action_result.data.*.verbose_msg",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.summary.total_scans",
+            "data_type": "numeric",
+            "column_name": "Total Scans",
+            "column_order": 0
+          },
+          {
+            "data_path": "action_result.summary.positives",
+            "data_type": "numeric",
+            "column_name": "Positives",
+            "column_order": 1
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.result",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.update",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.version",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.detected",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.message",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.parameter.scan_id",
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions": "EQ(*)"
+      },
+      {
+        "action": "detonate file",
+        "description": "Upload a file to Virus Total and retrieve the analysis results",
+        "verbose": "<b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.",
+        "type": "investigate",
+        "identifier": "detonate_file",
+        "read_only": true,
+        "parameters": {
+          "vault_id": {
+            "description": "The Vault ID of the file to scan",
+            "data_type": "string",
+            "primary": true,
+            "order": 0,
+            "required": true,
+            "contains": ["vault id"]
+          }
+        },
+        "render": {
+          "title": "DETONATE FILE",
+          "type": "table",
+          "width": 10,
+          "height": 5
+        },
+        "output": [
+          {
+            "data_path": "action_result.data.*.permalink",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.sha1",
+            "data_type": "string",
+            "contains": [ "hash", "sha1" ]
+          },
+          {
+            "data_path": "action_result.data.*.sha256",
+            "data_type": "string",
+            "contains": [ "hash", "sha256" ]
+          },
+          {
+            "data_path": "action_result.data.*.md5",
+            "data_type": "string",
+            "contains": [ "hash", "md5" ]
+          },
+          {
+            "data_path": "action_result.data.*.total",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "action_result.data.*.resource",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.response_code",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scan_date",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scan_id",
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
+          },
+          {
+            "data_path": "action_result.data.*.verbose_msg",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.summary.total_scans",
+            "data_type": "numeric",
+            "column_name": "Total Scans",
+            "column_order": 0
+          },
+          {
+            "data_path": "action_result.summary.positives",
+            "data_type": "numeric",
+            "column_name": "Positives",
+            "column_order": 1
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.result",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.update",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.version",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.data.*.scans.*.detected",
+            "data_type": "boolean"
+          },
+          {
+            "data_path": "action_result.status",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.message",
+            "data_type": "string"
+          },
+          {
+            "data_path": "action_result.parameter.vault_id",
+            "data_type": "string",
+            "contains": ["vault id"]
+          },
+          {
+            "data_path": "action_result.summary.scan_id",
+            "data_type": "string",
+            "contains": ["virustotal scan id"]
+          },
+          {
+            "data_path": "summary.total_objects",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_positives",
+            "data_type": "numeric"
+          },
+          {
+            "data_path": "summary.total_objects_successful",
+            "data_type": "numeric"
+          }
+        ],
+        "versions": "EQ(*)"
+      }
     ]
 }
