@@ -14,7 +14,7 @@
     "package_name": "phantom_virustotal",
     "logo": "logo_virustotal.svg",
     "logo_dark": "logo_virustotal_dark.svg",
-    "license": "Copyright (c) Phantom Cyber Corporation 2015-2017",
+    "license": "Copyright (c) Phantom Cyber Corporation, 2015-2018",
     "consolidate_widgets": false,
     "configuration": {
         "apikey": {
