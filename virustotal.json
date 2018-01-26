@@ -5,7 +5,7 @@
     "type": "reputation",
     "main_module": "virustotal_connector.pyc",
     "app_version": "1.2.40",
-    "utctime_updated": "2018-01-25T03:07:39.000000Z",
+    "utctime_updated": "2018-01-26T00:51:02.000000Z",
     "product_vendor": "VirusTotal",
     "product_name": "VirusTotal",
     "product_version_regex": ".*",
