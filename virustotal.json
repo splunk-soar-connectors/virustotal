@@ -30,7 +30,7 @@
             "default": true
         },
         "poll_interval": {
-            "description": "Minutes between each poll attempt (Default: 5)",
+            "description": "Number of minutes to poll for a detonation result (Default: 5)",
             "data_type": "numeric",
             "order": 2,
             "required": false,
