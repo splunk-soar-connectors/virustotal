@@ -35,6 +35,12 @@
             "order": 2,
             "required": false,
             "default": 5
+        },
+        "rate_limit": {
+            "description": "Limit number of requests to 4 per minute",
+            "data_type": "boolean",
+            "default": true,
+            "order": 3
         }
     },
     "actions": [

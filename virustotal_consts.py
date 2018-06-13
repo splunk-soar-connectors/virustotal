@@ -24,7 +24,7 @@ VIRUSTOTAL_ERR_CONNECTIVITY_TEST = "Connectivity test failed"
 VIRUSTOTAL_MSG_CHECK_APIKEY = 'Please check your APIKEY or the network connectivity'
 VIRUSTOTAL_MSG_OBJECT_NOT_FOUND = '{object_name} not found in results. Not in the service database'
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
-VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. Exceeded API request rate limit."
+VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. Exceeded API request rate limit. Try enabling rate limitation for this asset."
 VIRUSTOTAL_SERVER_ERROR_FORBIDDEN = "Server returned error code: {code}. API key does not have permission for this action."
 VIRUSTOTAL_SERVER_ERROR_NOT_FOUND = "Server returned error code: {code}. Requested file not found."
 VIRUSTOTAL_NO_RESPONSE = "Server did not return a response for the object queried"
@@ -35,6 +35,7 @@ VIRUSTOTAL_MAX_POLLS_REACHED = "Reached max polling attempts. Try rerunning the 
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"
+VIRUSTOTAL_JSON_RATE_LIMIT = "rate_limit"
 VIRUSTOTAL_JSON_DETECTIONS = "detections"
 VIRUSTOTAL_JSON_FOUND = "found"
 VIRUSTOTAL_JSON_POSITIVES = "positives"

@@ -64,6 +64,8 @@ class VirustotalConnector(BaseConnector):
         super(VirustotalConnector, self).__init__()
 
         self._apikey = None
+        self._rate_limit = None
+        self._verify_ssl = None
 
     def _process_empty_reponse(self, response, action_result):
 
@@ -137,7 +139,6 @@ class VirustotalConnector(BaseConnector):
     def _make_rest_call(self, action_result, endpoint, params={}, body={}, headers={}, files=None, method="get"):
         """ Returns 2 values, use RetVal """
 
-        config = self.get_config()
         url = "https://www.virustotal.com/vtapi/v2" + endpoint
 
         try:
@@ -149,11 +150,18 @@ class VirustotalConnector(BaseConnector):
             # Set the action_result status to error, the handler function will most probably return as is
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Handled exception: {0}".format(str(e))), None)
 
+        # Check rate limit
+        if self._rate_limit:
+            self._check_rate_limit()
+
         try:
-            response = request_func(url, params=params, json=body, headers=headers, files=files, verify=config[phantom.APP_JSON_VERIFY])
+            response = request_func(url, params=params, json=body, headers=headers, files=files, verify=self._verify_ssl)
         except Exception as e:
             # Set the action_result status to error, the handler function will most probably return as is
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting: {0}".format(str(e))), None)
+
+        if self._rate_limit:
+            self._track_rate_limit(response.headers.get('Date'))
 
         self.debug_print(response.url)
         self.debug_print(response.text)
@@ -162,6 +170,65 @@ class VirustotalConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
 
         return self._process_response(response, action_result)
+
+    def _check_rate_limit(self, count=1):
+        """ Check to see if the rate limit is within the "4 requests per minute". Wait and check again if the request is too soon.
+
+        Returns:
+            boolean: True, when the rate limitation is not greater than or equal to the allocated amount
+        """
+        self.debug_print('Checking rate limit')
+
+        state = self.load_state()
+        if not state or not state.get('rate_limit_timestamps'):
+            self.save_state({'rate_limit_timestamps': []})
+            return True
+
+        # Cleanup existing timestamp list to only have the timestamps within the last 60 seconds
+        timestamps = state['rate_limit_timestamps']
+        current_time = int(time.time())
+        for timestamp in timestamps:
+            time_diff = current_time - timestamp
+            if time_diff > 60:
+                timestamps.remove(timestamp)
+
+        # Save new cleaned list
+        self.save_state({'rate_limit_timestamps': timestamps})
+
+        # If there are too many within the last minute, we will wait the min_time_diff and try again
+        if len(timestamps) >= 4:
+            wait_time = 61 - (current_time - min(t for t in timestamps))
+
+            self.send_progress('Rate limit check #{0}. Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
+            time.sleep(wait_time)
+            # Use recursive call to try again
+            return self._check_rate_limit(count + 1)
+
+        return True
+
+    def _track_rate_limit(self, timestamp):
+        """ Track timestamp of VirusTotal requests to stay within rate limitations
+
+        Args:
+            timestamp (str): Timestamp from the last requests call (e.g., 'Tue, 12 Jun 2018 16:39:37 GMT')
+
+        Returns:
+            boolean: True
+        """
+        self.debug_print('Tracking rate limit')
+
+        if not timestamp:
+            epoch = int(time.time())
+        else:
+            epoch = int(time.mktime(time.strptime(timestamp, '%a, %d %b %Y %H:%M:%S GMT')))
+
+        state = self.load_state()
+        timestamps = state.get('rate_limit_timestamps', [])
+        timestamps.append(epoch)
+
+        self.save_state({'rate_limit_timestamps': timestamps})
+
+        return True
 
     def _query_ip_domain(self, param, object_name, query_url):
 
@@ -354,14 +421,15 @@ class VirustotalConnector(BaseConnector):
         params = {'apikey': self._apikey}
         vault_id = param['vault_id']
 
-        file_info = Vault.get_file_info(vault_id=vault_id, container_id=self.get_container_id())[0]
-        self.debug_print(file_info)
         try:
-            file_path = file_info['path']  # noqa
-            file_name = file_info['name']  # noqa
+            file_info = Vault.get_file_info(vault_id=vault_id, container_id=self.get_container_id())[0]
+            self.debug_print(file_info)
+
+            file_path = file_info['path']
+            file_name = file_info['name']
             file_sha256 = file_info['metadata']['sha256']
         except Exception as e:
-            return action_result.set_status("Unable to retrieve file from vault: {0}", e)
+            return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(e))
 
         params['resource'] = file_sha256
 
@@ -537,6 +605,8 @@ class VirustotalConnector(BaseConnector):
         action = self.get_action_identifier()
         config = self.get_config()
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
+        self._rate_limit = config[VIRUSTOTAL_JSON_RATE_LIMIT]
+        self._verify_ssl = config[phantom.APP_JSON_VERIFY]
 
         if (action == self.ACTION_ID_QUERY_FILE):
             result = self._query_file(param)
