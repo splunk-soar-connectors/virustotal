@@ -13,7 +13,7 @@
     "publisher": "Phantom",
     "package_name": "phantom_virustotal",
     "logo": "virustotal-logo.png",
-    "license": "Copyright (c) Phantom Cyber Corporation 2015-2017",
+    "license": "Copyright (c) 2015-2018 Splunk Inc.",
     "consolidate_widgets": false,
     "configuration": {
         "apikey": {
@@ -83,23 +83,17 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.permalink",
+                    "data_path": "action_result.status",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.sha1",
+                    "data_path": "action_result.parameter.hash",
                     "data_type": "string",
                     "contains": [
                         "hash",
-                        "sha1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sha256",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256"
+                        "sha256",
+                        "sha1",
+                        "md5"
                     ]
                 },
                 {
@@ -111,8 +105,8 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.total",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.permalink",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.positives",
@@ -138,16 +132,8 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.summary.positives",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.scans.*.detected",
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.scans.*.result",
@@ -162,37 +148,51 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.scans.*.detected",
-                    "data_type": "boolean"
+                    "data_path": "action_result.data.*.sha1",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha1"
+                    ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.sha256",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.verbose_msg",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.positives",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.summary.total_scans",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.parameter.hash",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256",
-                        "sha1",
-                        "md5"
-                    ]
-                },
-                {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_positives",
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
+                    "data_path": "summary.total_positives",
                     "data_type": "numeric"
                 }
             ],
@@ -234,12 +234,19 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.permalink",
+                    "data_path": "action_result.status",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.total",
-                    "data_type": "numeric"
+                    "data_path": "action_result.parameter.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.permalink",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.positives",
@@ -270,10 +277,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
                     "data_path": "action_result.data.*.scans.*.detected",
                     "data_type": "boolean"
                 },
@@ -282,24 +285,8 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.summary.found",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.summary.detections",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric",
-                    "column_name": "Total Scans",
-                    "column_order": 1
-                },
-                {
-                    "data_path": "action_result.summary.positives",
-                    "data_type": "numeric",
-                    "column_name": "Positives",
-                    "column_order": 2
+                    "data_path": "action_result.data.*.total",
+                    "data_type": "numeric"
                 },
                 {
                     "data_path": "action_result.data.*.url",
@@ -309,30 +296,43 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.verbose_msg",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.detections",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.summary.found",
+                    "data_type": "boolean"
+                },
+                {
+                    "data_path": "action_result.summary.positives",
+                    "data_type": "numeric",
+                    "column_name": "Positives",
+                    "column_order": 2
+                },
+                {
+                    "data_path": "action_result.summary.total_scans",
+                    "data_type": "numeric",
+                    "column_name": "Total Scans",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.parameter.url",
-                    "data_type": "string",
-                    "contains": [
-                        "url"
-                    ]
-                },
-                {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_positives",
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
+                    "data_path": "summary.total_positives",
                     "data_type": "numeric"
                 }
             ],
@@ -367,6 +367,10 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.domain",
                     "data_type": "string",
                     "contains": [
@@ -394,16 +398,26 @@
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.data.*.Webutation domain info.Verdict",
-                    "data_type": "string",
-                    "column_name": "Webutation Info Verdict",
-                    "column_order": 4
-                },
-                {
                     "data_path": "action_result.data.*.BitDefender category",
                     "data_type": "string",
                     "column_name": "Bitdefender category",
                     "column_order": 5
+                },
+                {
+                    "data_path": "action_result.data.*.BitDefender domain info",
+                    "data_type": "string",
+                    "column_name": "Bitdefender domain info",
+                    "column_order": 15
+                },
+                {
+                    "data_path": "action_result.data.*.Dr&2e;Web category",
+                    "data_type": "string",
+                    "column_name": "Dr. Web category",
+                    "column_order": 16
+                },
+                {
+                    "data_path": "action_result.data.*.Malwarebytes hpHosts info",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.Opera domain info",
@@ -460,23 +474,60 @@
                     "column_order": 14
                 },
                 {
-                    "data_path": "action_result.data.*.BitDefender domain info",
+                    "data_path": "action_result.data.*.Webutation domain info.Verdict",
                     "data_type": "string",
-                    "column_name": "Bitdefender domain info",
-                    "column_order": 15
+                    "column_name": "Webutation Info Verdict",
+                    "column_order": 4
                 },
                 {
-                    "data_path": "action_result.data.*.Dr&2e;Web category",
-                    "data_type": "string",
-                    "column_name": "Dr. Web category",
-                    "column_order": 16
+                    "data_path": "action_result.data.*.categories",
+                    "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.summary.downloaded_samples",
+                    "data_path": "action_result.data.*.detected_urls.*.positives",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.summary.detected_urls",
+                    "data_path": "action_result.data.*.detected_urls.*.scan_date",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.detected_urls.*.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.detected_urls.*.url",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.resolutions.*.ip_address",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.resolutions.*.last_resolved",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.response_code",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.subdomains",
+                    "data_type": "string",
+                    "contains": [
+                        "domain"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.verbose_msg",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.whois",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.whois_timestamp",
                     "data_type": "numeric"
                 },
                 {
@@ -488,63 +539,12 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.whois",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.categories",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.subdomains",
-                    "data_type": "string",
-                    "contains": [
-                        "domain"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.resolutions.*.ip_address",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.resolutions.*.last_resolved",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.url",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.total",
+                    "data_path": "action_result.summary.detected_urls",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.detected_urls.*.positives",
+                    "data_path": "action_result.summary.downloaded_samples",
                     "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.scan_date",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.response_code",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.whois_timestamp",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.Malwarebytes hpHosts info",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -555,11 +555,11 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_positives",
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
+                    "data_path": "summary.total_positives",
                     "data_type": "numeric"
                 }
             ],
@@ -594,6 +594,10 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.ip",
                     "data_type": "string",
                     "contains": [
@@ -621,31 +625,19 @@
                     "column_order": 3
                 },
                 {
-                    "data_path": "action_result.summary.downloaded_samples",
+                    "data_path": "action_result.data.*.detected_communicating_samples.*.date",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.detected_communicating_samples.*.positives",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.summary.communicating_samples",
-                    "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.data.*.resolutions.*.hostname",
+                    "data_path": "action_result.data.*.detected_communicating_samples.*.sha256",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.resolutions.*.last_resolved",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.url",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_urls.*.total",
+                    "data_path": "action_result.data.*.detected_communicating_samples.*.total",
                     "data_type": "numeric"
                 },
                 {
@@ -657,6 +649,22 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.data.*.detected_urls.*.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.detected_urls.*.url",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.resolutions.*.hostname",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.data.*.resolutions.*.last_resolved",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.response_code",
                     "data_type": "numeric"
                 },
@@ -665,7 +673,7 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.undetected_downloaded_samples.*.total",
+                    "data_path": "action_result.data.*.undetected_downloaded_samples.*.positives",
                     "data_type": "numeric"
                 },
                 {
@@ -673,28 +681,20 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.undetected_downloaded_samples.*.positives",
+                    "data_path": "action_result.data.*.undetected_downloaded_samples.*.total",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.detected_communicating_samples.*.date",
+                    "data_path": "action_result.data.*.verbose_msg",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.detected_communicating_samples.*.total",
+                    "data_path": "action_result.summary.communicating_samples",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "action_result.data.*.detected_communicating_samples.*.sha256",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.detected_communicating_samples.*.positives",
+                    "data_path": "action_result.summary.downloaded_samples",
                     "data_type": "numeric"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.message",
@@ -705,11 +705,11 @@
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_positives",
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
+                    "data_path": "summary.total_positives",
                     "data_type": "numeric"
                 }
             ],
@@ -744,6 +744,26 @@
             },
             "output": [
                 {
+                    "data_path": "action_result.status",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.parameter.hash",
+                    "data_type": "string",
+                    "column_name": "Hash",
+                    "column_order": 1,
+                    "contains": [
+                        "hash",
+                        "sha256",
+                        "sha1",
+                        "md5"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.file_type",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.name",
                     "data_type": "string"
                 },
@@ -755,16 +775,10 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.file_type",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
+                    "data_path": "action_result.summary.file_type",
+                    "data_type": "string",
+                    "column_name": "File Type",
+                    "column_order": 2
                 },
                 {
                     "data_path": "action_result.summary.name",
@@ -782,33 +796,19 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.summary.file_type",
-                    "data_type": "string",
-                    "column_name": "File Type",
-                    "column_order": 2
-                },
-                {
-                    "data_path": "action_result.parameter.hash",
-                    "data_type": "string",
-                    "column_name": "Hash",
-                    "column_order": 1,
-                    "contains": [
-                        "hash",
-                        "sha256",
-                        "sha1",
-                        "md5"
-                    ]
+                    "data_path": "action_result.message",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_positives",
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
+                    "data_path": "summary.total_positives",
                     "data_type": "numeric"
                 }
             ],
@@ -840,23 +840,14 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.permalink",
+                    "data_path": "action_result.status",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.sha1",
+                    "data_path": "action_result.parameter.scan_id",
                     "data_type": "string",
                     "contains": [
-                        "hash",
-                        "sha1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sha256",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256"
+                        "virustotal scan id"
                     ]
                 },
                 {
@@ -868,8 +859,8 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.total",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.permalink",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.positives",
@@ -895,20 +886,8 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric",
-                    "column_name": "Total Scans",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.summary.positives",
-                    "data_type": "numeric",
-                    "column_name": "Positives",
-                    "column_order": 1
+                    "data_path": "action_result.data.*.scans.*.detected",
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.scans.*.result",
@@ -923,34 +902,55 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.scans.*.detected",
-                    "data_type": "boolean"
+                    "data_path": "action_result.data.*.sha1",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha1"
+                    ]
                 },
                 {
-                    "data_path": "action_result.status",
+                    "data_path": "action_result.data.*.sha256",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.verbose_msg",
                     "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.positives",
+                    "data_type": "numeric",
+                    "column_name": "Positives",
+                    "column_order": 1
+                },
+                {
+                    "data_path": "action_result.summary.total_scans",
+                    "data_type": "numeric",
+                    "column_name": "Total Scans",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.message",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.parameter.scan_id",
-                    "data_type": "string",
-                    "contains": [
-                        "virustotal scan id"
-                    ]
-                },
-                {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_positives",
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
+                    "data_path": "summary.total_positives",
                     "data_type": "numeric"
                 }
             ],
@@ -983,23 +983,14 @@
             },
             "output": [
                 {
-                    "data_path": "action_result.data.*.permalink",
+                    "data_path": "action_result.status",
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.sha1",
+                    "data_path": "action_result.parameter.vault_id",
                     "data_type": "string",
                     "contains": [
-                        "hash",
-                        "sha1"
-                    ]
-                },
-                {
-                    "data_path": "action_result.data.*.sha256",
-                    "data_type": "string",
-                    "contains": [
-                        "hash",
-                        "sha256"
+                        "vault id"
                     ]
                 },
                 {
@@ -1011,8 +1002,8 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.total",
-                    "data_type": "numeric"
+                    "data_path": "action_result.data.*.permalink",
+                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.positives",
@@ -1038,20 +1029,8 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.verbose_msg",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric",
-                    "column_name": "Total Scans",
-                    "column_order": 0
-                },
-                {
-                    "data_path": "action_result.summary.positives",
-                    "data_type": "numeric",
-                    "column_name": "Positives",
-                    "column_order": 1
+                    "data_path": "action_result.data.*.scans.*.detected",
+                    "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.scans.*.result",
@@ -1066,23 +1045,34 @@
                     "data_type": "string"
                 },
                 {
-                    "data_path": "action_result.data.*.scans.*.detected",
-                    "data_type": "boolean"
-                },
-                {
-                    "data_path": "action_result.status",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.message",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.parameter.vault_id",
+                    "data_path": "action_result.data.*.sha1",
                     "data_type": "string",
                     "contains": [
-                        "vault id"
+                        "hash",
+                        "sha1"
                     ]
+                },
+                {
+                    "data_path": "action_result.data.*.sha256",
+                    "data_type": "string",
+                    "contains": [
+                        "hash",
+                        "sha256"
+                    ]
+                },
+                {
+                    "data_path": "action_result.data.*.total",
+                    "data_type": "numeric"
+                },
+                {
+                    "data_path": "action_result.data.*.verbose_msg",
+                    "data_type": "string"
+                },
+                {
+                    "data_path": "action_result.summary.positives",
+                    "data_type": "numeric",
+                    "column_name": "Positives",
+                    "column_order": 1
                 },
                 {
                     "data_path": "action_result.summary.scan_id",
@@ -1092,15 +1082,25 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.summary.total_scans",
+                    "data_type": "numeric",
+                    "column_name": "Total Scans",
+                    "column_order": 0
+                },
+                {
+                    "data_path": "action_result.message",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "summary.total_objects",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_positives",
+                    "data_path": "summary.total_objects_successful",
                     "data_type": "numeric"
                 },
                 {
-                    "data_path": "summary.total_objects_successful",
+                    "data_path": "summary.total_positives",
                     "data_type": "numeric"
                 }
             ],
