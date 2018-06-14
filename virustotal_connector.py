@@ -67,7 +67,7 @@ class VirustotalConnector(BaseConnector):
         self._rate_limit = None
         self._verify_ssl = None
 
-    def _process_empty_reponse(self, response, action_result):
+    def _process_empty_response(self, response, action_result):
 
         if (200 <= response.status_code < 205):
             return RetVal(phantom.APP_SUCCESS, {})
@@ -81,7 +81,7 @@ class VirustotalConnector(BaseConnector):
 
         try:
             soup = BeautifulSoup(response.text, "html.parser")
-            error_text = soup.text
+            error_text = soup.text.encode('utf-8')
             split_lines = error_text.split('\n')
             split_lines = [x.strip() for x in split_lines if x.strip()]
             error_text = '\n'.join(split_lines)
@@ -89,7 +89,7 @@ class VirustotalConnector(BaseConnector):
             error_text = "Cannot parse error details"
 
         message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code,
-                error_text)
+                                                                      error_text)
 
         message = message.replace('{', '{{').replace('}', '}}')
 
@@ -107,6 +107,15 @@ class VirustotalConnector(BaseConnector):
         if (200 <= r.status_code < 205):
             return RetVal(phantom.APP_SUCCESS, resp_json)
 
+        # It's been noticed that VT sometimes sends back a list with a single item, instead of a dictionary
+        # Happened a couple of times on customer site
+        if type(resp_json) == list:
+            self.debug_print("Got a list, will be using the first item")
+            resp_json = resp_json[0]
+
+        if type(resp_json) != dict:
+            return action_result.set_status(phantom.APP_ERROR, "Response from server not a type that is expected")
+
         action_result.add_data(resp_json)
         message = r.text.replace('{', '{{').replace('}', '}}')
         return RetVal( action_result.set_status( phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
@@ -116,7 +125,7 @@ class VirustotalConnector(BaseConnector):
         # store the r_text in debug data, it will get dumped in the logs if an error occurs
         if hasattr(action_result, 'add_debug_data'):
             action_result.add_debug_data({'r_status_code': r.status_code})
-            action_result.add_debug_data({'r_text': r.text})
+            action_result.add_debug_data({'r_text': r.text.encode('utf-8')})
             action_result.add_debug_data({'r_headers': r.headers})
 
         # There are just too many differences in the response to handle all of them in the same function
@@ -126,9 +135,9 @@ class VirustotalConnector(BaseConnector):
         if ('html' in r.headers.get('Content-Type', '')):
             return self._process_html_response(r, action_result)
 
-        # it's not an html or json, handle if it is a successfull empty reponse
+        # it's not an html or json, handle if it is a successful empty response
         if (200 <= r.status_code < 205) and (not r.text):
-            return self._process_empty_reponse(r, action_result)
+            return self._process_empty_response(r, action_result)
 
         # everything else is actually an error at this point
         message = "Can't process response from server. Status Code: {0} Data from server: {1}".format(
@@ -136,10 +145,11 @@ class VirustotalConnector(BaseConnector):
 
         return RetVal(action_result.set_status(phantom.APP_ERROR, message), None)
 
-    def _make_rest_call(self, action_result, endpoint, params={}, body={}, headers={}, files=None, method="get"):
+    def _make_rest_call(self, action_result, endpoint, params=None, body=None, headers=None, files=None, method="get"):
         """ Returns 2 values, use RetVal """
 
-        url = "https://www.virustotal.com/vtapi/v2" + endpoint
+        url = BASE_URL + endpoint
+        self.save_progress(VIRUSTOTAL_MSG_CREATED_URL, url=url)
 
         try:
             request_func = getattr(requests, method)
@@ -164,7 +174,6 @@ class VirustotalConnector(BaseConnector):
             self._track_rate_limit(response.headers.get('Date'))
 
         self.debug_print(response.url)
-        self.debug_print(response.text)
 
         if response.status_code == 204:
             return RetVal(action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
@@ -242,60 +251,33 @@ class VirustotalConnector(BaseConnector):
 
         self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
 
-        config = self.get_config()
+        ret_val, json_resp = self._make_rest_call(action_result, query_url, params=params)
+        if phantom.is_fail(ret_val):
+            return ret_val
 
-        try:
-            r = requests.get(query_url, params=params, verify=config[phantom.APP_JSON_VERIFY])
-        except Exception as e:
-            self.debug_print('_query_ip_domain', e)
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
+        # add the data
+        action_result.add_data(json_resp)
 
-        # It's ok if r.text is None, dump that
-        action_result.add_debug_data({'r_text': r.text if r else 'r is None'})
-
-        if (r.status_code == 204):
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=r.status_code))
-
-        if (r.status_code != 200):
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE.format(code=r.status_code))
-
-        try:
-            response_dict = r.json()
-        except Exception as e:
-            self.debug_print("Response from server not a valid JSON", e)
-            return action_result.set_status(phantom.APP_ERROR, "Response from server not a valid JSON")
-
-        # It's been noticed that VT sometimes sends back a list with a single item, instead of a dictionary
-        # Happened a couple of times on customer site
-        if (type(response_dict) == list):
-            self.debug_print("Got a list, will be using the first item")
-            response_dict = response_dict[0]
-
-        if (type(response_dict) != dict):
-            return action_result.set_status(phantom.APP_ERROR, "Response from server not a type that is expected")
-
-        action_result.add_data(response_dict)
-
-        if ('response_code' not in response_dict):
+        if 'response_code' not in json_resp:
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
 
         action_result.set_status(phantom.APP_SUCCESS)
 
-        if (response_dict['response_code'] == 0):
+        if json_resp['response_code'] == 0:
             action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_MSG_OBJECT_NOT_FOUND,
-                    object_name=object_name.capitalize())
+                                     object_name=object_name.capitalize())
 
-        if ('Alexa rank' in response_dict):
-            item_summary[VIRUSTOTAL_JSON_ALEXA_RANK] = response_dict['Alexa rank']
+        if 'Alexa rank' in json_resp:
+            item_summary[VIRUSTOTAL_JSON_ALEXA_RANK] = json_resp['Alexa rank']
 
-        if ('detected_urls' in response_dict):
-            item_summary[VIRUSTOTAL_JSON_DETECTED_URLS] = len(response_dict['detected_urls'])
+        if 'detected_urls' in json_resp:
+            item_summary[VIRUSTOTAL_JSON_DETECTED_URLS] = len(json_resp['detected_urls'])
 
-        if ('detected_downloaded_samples' in response_dict):
-            item_summary[VIRUSTOTAL_JSON_DOWNLOADED_SAMPLES] = len(response_dict['detected_downloaded_samples'])
+        if 'detected_downloaded_samples' in json_resp:
+            item_summary[VIRUSTOTAL_JSON_DOWNLOADED_SAMPLES] = len(json_resp['detected_downloaded_samples'])
 
-        if ('detected_communicating_samples' in response_dict):
-            item_summary[VIRUSTOTAL_JSON_COMMUNICATING_SAMPLES] = len(response_dict['detected_communicating_samples'])
+        if 'detected_communicating_samples' in json_resp:
+            item_summary[VIRUSTOTAL_JSON_COMMUNICATING_SAMPLES] = len(json_resp['detected_communicating_samples'])
 
         return action_result.get_status()
 
@@ -306,75 +288,46 @@ class VirustotalConnector(BaseConnector):
 
         params = {'resource': object_value, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
-        config = self.get_config()
-
         # Format the request with the URL and the params
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL, query_url=query_url)
-        try:
-            r = requests.get(query_url, params=params, verify=config[phantom.APP_JSON_VERIFY])
-        except Exception as e:
-            self.debug_print("_query_file_url", e)
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
 
-        # It's ok if r.text is None, dump that
-        action_result.add_debug_data({'r_text': r.text if r else ''})
-
-        self.debug_print("status_code", r.status_code)
-
-        if (r.status_code == 204):
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=r.status_code))
-
-        if (r.status_code != 200):
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE.format(code=r.status_code))
-
-        try:
-            result = r.json()
-        except Exception as e:
-            self.debug_print("Response from server not a valid JSON", e)
-            return action_result.set_status(phantom.APP_ERROR, "Response from server not a valid JSON")
-
-        # It's been noticed that VT sometimes sends back a list with a single item, instead of a dictionary
-        # Happened a couple of times on customer site
-        if (type(result) == list):
-            self.debug_print("Got a list, will be using the first item")
-            result = result[0]
-
-        if (type(result) != dict):
-            return action_result.set_status(phantom.APP_ERROR, "Response from server not a type that is expected")
+        ret_val, json_resp = self._make_rest_call(action_result, query_url, params=params)
+        if phantom.is_fail(ret_val):
+            return ret_val
 
         # add the data
-        action_result.add_data(result)
+        action_result.add_data(json_resp)
 
         # update the summary
-        action_result.update_summary({VIRUSTOTAL_JSON_TOTAL_SCANS: result.get('total', 0),
-            VIRUSTOTAL_JSON_POSITIVES: result.get('positives', 0)})
+        action_result.update_summary({VIRUSTOTAL_JSON_TOTAL_SCANS: json_resp.get('total', 0),
+                                      VIRUSTOTAL_JSON_POSITIVES: json_resp.get('positives', 0)})
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
     def _query_url(self, param):
 
         json_key = phantom.APP_JSON_URL
-        query_url = URL_API_URL
+        query_url = URL_API_ENDPOINT
 
         return self._query_file_url(param, json_key, query_url)
 
     def _query_file(self, param):
 
         json_key = phantom.APP_JSON_HASH
-        query_url = FILE_API_URL
+        query_url = FILE_API_ENDPOINT
 
         return self._query_file_url(param, json_key, query_url)
 
     def _query_ip(self, param):
 
-        query_url = IP_API_URL
+        query_url = IP_API_ENDPOINT
         object_name = phantom.APP_JSON_IP
 
         return self._query_ip_domain(param, object_name, query_url)
 
     def _query_domain(self, param):
 
-        query_url = DOMAIN_API_URL
+        query_url = DOMAIN_API_ENDPOINT
         object_name = phantom.APP_JSON_DOMAIN
 
         return self._query_ip_domain(param, object_name, query_url)
@@ -392,14 +345,13 @@ class VirustotalConnector(BaseConnector):
     def _poll_for_result(self, action_result, scan_id, poll_interval):
 
         attempt = 1
-        endpoint = '/file/report'
         params = {'apikey': self._apikey, 'resource': scan_id}
         # Since we sleep 1 minute between each poll, the poll_interval is
         # equal to the number of attempts
         poll_attempts = poll_interval
         while attempt <= poll_attempts:
             self.save_progress("Polling attempt {0} of {1}".format(attempt, poll_attempts))
-            ret_val, json_resp = self._make_rest_call(action_result, endpoint, params, method="post")
+            ret_val, json_resp = self._make_rest_call(action_result, FILE_API_ENDPOINT, params, method="post")
             if phantom.is_fail(ret_val):
                 return ret_val
             self.debug_print(json_resp)
@@ -433,7 +385,7 @@ class VirustotalConnector(BaseConnector):
 
         params['resource'] = file_sha256
 
-        ret_val, json_resp = self._make_rest_call(action_result, '/file/report', params=params, method="post")
+        ret_val, json_resp = self._make_rest_call(action_result, FILE_API_ENDPOINT, params=params, method="post")
         if phantom.is_fail(ret_val):
             return ret_val
 
@@ -447,7 +399,7 @@ class VirustotalConnector(BaseConnector):
         if response_code == 0:  # Not found on server
             files = {'file': (file_name, open(file_path, 'rb'))}
             params = {'apikey': self._apikey}
-            ret_val, json_resp = self._make_rest_call(action_result, '/file/scan', params=params, files=files, method="post")
+            ret_val, json_resp = self._make_rest_call(action_result, UPLOAD_FILE_ENDPOINT, params=params, files=files, method="post")
             if phantom.is_fail(ret_val):
                 return ret_val
             try:
@@ -467,25 +419,30 @@ class VirustotalConnector(BaseConnector):
         return self._poll_for_result(action_result, scan_id, poll_interval)
 
     def _get_file(self, param):
-
+        """ Note: Need to have this action utilize the _make_rest_call method, but we are unable to test it with our current API key. """
         action_result = self.add_action_result(ActionResult(dict(param)))
-
-        config = self.get_config()
 
         json_key = phantom.APP_JSON_HASH
         file_hash = param[json_key]
 
-        query_url = GET_FILE_API_URL
+        query_url = BASE_URL + GET_FILE_API_ENDPOINT
 
         params = {json_key: file_hash, VIRUSTOTAL_JSON_APIKEY: self._apikey}
+
+        # Check rate limit
+        if self._rate_limit:
+            self._check_rate_limit()
 
         # Format the request with the URL and the params
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL, query_url=query_url)
         try:
-            r = requests.get(query_url, params=params, verify=config[phantom.APP_JSON_VERIFY])
+            r = requests.get(query_url, params=params, verify=self._verify_ssl)
         except Exception as e:
             self.debug_print("_get_file", e)
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
+
+        if self._rate_limit:
+            self._track_rate_limit(r.headers.get('Date'))
 
         self.debug_print("status_code", r.status_code)
 
@@ -555,6 +512,8 @@ class VirustotalConnector(BaseConnector):
 
     def _test_asset_connectivity(self, param):
 
+        action_result = self.add_action_result(ActionResult(dict(param)))
+
         # Create a hash of a random string
         random_string = phantom.get_random_chars(size=10)
         md5sum = hashlib.md5(random_string).hexdigest()
@@ -563,29 +522,12 @@ class VirustotalConnector(BaseConnector):
 
         self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
 
-        config = self.get_config()
-
-        try:
-            r = requests.get(FILE_API_URL, params=params, verify=config[phantom.APP_JSON_VERIFY])
-        except Exception as e:
-            self.debug_print('_test_asset_connectivity', e)
-            self.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERR_CONNECTIVITY_TEST, e)
+        ret_val, json_resp = self._make_rest_call(action_result, FILE_API_ENDPOINT, params=params)
+        if phantom.is_fail(ret_val):
             self.append_to_message(VIRUSTOTAL_MSG_CHECK_APIKEY)
-            # self.save_progress('{0}. {1}'.format(VIRUSTOTAL_ERR_CONNECTIVITY_TEST, VIRUSTOTAL_MSG_CHECK_APIKEY))
-            return self.get_status()
+            return ret_val
 
-        if (r.status_code == 204):
-            return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=r.status_code))
-
-        if (r.status_code != 200):
-            self.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE.format(code=r.status_code))
-            self.append_to_message(VIRUSTOTAL_MSG_CHECK_APIKEY)
-            # self.save_progress('{0}. {1}'.format(VIRUSTOTAL_ERR_CONNECTIVITY_TEST, VIRUSTOTAL_MSG_CHECK_APIKEY))
-            return self.get_status()
-
-        result = r.json()
-
-        if ('resource' in result):
+        if 'resource' in json_resp:
             self.set_status_save_progress(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
         else:
             self.set_status_save_progress(phantom.APP_ERROR, VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
@@ -596,6 +538,7 @@ class VirustotalConnector(BaseConnector):
         """Function that handles all the actions
 
         Args:
+            param (dict): Parameters sent in by a user or playbook
 
         Return:
             A status code
