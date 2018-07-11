@@ -12,7 +12,8 @@
     "min_phantom_version": "3.0.190",
     "publisher": "Phantom",
     "package_name": "phantom_virustotal",
-    "logo": "virustotal-logo.png",
+    "logo": "logo_virustotal.svg",
+    "logo_dark": "logo_virustotal_dark.svg",
     "license": "Copyright (c) 2015-2018 Splunk Inc.",
     "consolidate_widgets": false,
     "configuration": {
