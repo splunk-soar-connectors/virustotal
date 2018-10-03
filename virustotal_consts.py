@@ -19,6 +19,7 @@ VIRUSTOTAL_SERVER_ERROR_FORBIDDEN = "Server returned error code: {code}. API key
 VIRUSTOTAL_SERVER_ERROR_NOT_FOUND = "Server returned error code: {code}. Requested file not found."
 VIRUSTOTAL_SERVER_CONNECTION_ERROR = "Server connection error"
 VIRUSTOTAL_RESOURCE_NOT_FOUND = "Resource not found in VirusTotal database"
+VIRUSTOTAL_INVALID_URL = "Invalid URL specified. Please validate the input and try again"
 VIRUSTOTAL_MAX_POLLS_REACHED = "Reached max polling attempts. Try rerunning the action with the 'scan_id' parameter"
 
 # Jsons used in params, result, summary etc.
@@ -38,5 +39,6 @@ FILE_API_ENDPOINT = 'file/report'
 UPLOAD_FILE_ENDPOINT = 'file/scan'
 GET_FILE_API_ENDPOINT = 'file/download'
 URL_API_ENDPOINT = 'url/report'
+DETONATE_URL_ENDPOINT = 'url/scan'
 DOMAIN_API_ENDPOINT = 'domain/report'
 IP_API_ENDPOINT = 'ip-address/report'
