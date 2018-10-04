@@ -836,8 +836,11 @@
                     "description": "Type of report to download",
                     "data_type": "string",
                     "order": 1,
-                    "value_list": ["file", "url"],
-		            "default": "file",
+                    "value_list": [
+                        "file",
+                        "url"
+                    ],
+                    "default": "file",
                     "required": true
                 }
             },
@@ -853,15 +856,15 @@
                     "data_type": "string"
                 },
                 {
+                    "data_path": "action_result.parameter.report_type",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.parameter.scan_id",
                     "data_type": "string",
                     "contains": [
                         "virustotal scan id"
                     ]
-                },
-                {
-                    "data_path": "action_result.parameter.report_type",
-                    "data_type": "string"
                 },
                 {
                     "data_path": "action_result.data.*.md5",
@@ -1157,13 +1160,6 @@
                     ]
                 },
                 {
-                    "data_path": "action_result.data.*.url",
-                    "data_type": "string",
-                    "contains":[
-                        "url"
-                    ]
-                },
-                {
                     "data_path": "action_result.data.*.permalink",
                     "data_type": "string"
                 },
@@ -1203,6 +1199,13 @@
                     "data_type": "numeric"
                 },
                 {
+                    "data_path": "action_result.data.*.url",
+                    "data_type": "string",
+                    "contains": [
+                        "url"
+                    ]
+                },
+                {
                     "data_path": "action_result.data.*.verbose_msg",
                     "data_type": "string"
                 },
@@ -1213,17 +1216,17 @@
                     "column_order": 1
                 },
                 {
-                    "data_path": "action_result.summary.total_scans",
-                    "data_type": "numeric",
-                    "column_name": "Total Scans",
-                    "column_order": 0
-                },
-                {
                     "data_path": "action_result.summary.scan_id",
                     "data_type": "string",
                     "contains": [
                         "virustotal scan id"
                     ]
+                },
+                {
+                    "data_path": "action_result.summary.total_scans",
+                    "data_type": "numeric",
+                    "column_name": "Total Scans",
+                    "column_order": 0
                 },
                 {
                     "data_path": "action_result.message",
