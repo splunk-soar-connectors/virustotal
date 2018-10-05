@@ -1128,7 +1128,7 @@
             "verbose": "<b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.",
             "type": "investigate",
             "identifier": "detonate_url",
-            "read_only": true,
+            "read_only": false,
             "parameters": {
                 "url": {
                     "description": "URL to detonate",
