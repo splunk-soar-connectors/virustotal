@@ -41,6 +41,7 @@ class VirustotalConnector(BaseConnector):
     ACTION_ID_GET_FILE = "get_file"
     ACTION_ID_GET_REPORT = "get_report"
     ACTION_ID_DETONATE_FILE = "detonate_file"
+    ACTION_ID_DETONTATE_URL = "detonate_url"
 
     MAGIC_FORMATS = [
       (re.compile('^PE.* Windows'), ['pe file'], '.exe'),
@@ -325,7 +326,7 @@ class VirustotalConnector(BaseConnector):
 
         return self._query_ip_domain(param, object_name, query_url)
 
-    def _update_action_result_for_detonate_file(self, action_result, json_resp):
+    def _update_action_result_for_detonate(self, action_result, json_resp):
         action_result.add_data(json_resp)
 
         # update the summary
@@ -335,21 +336,27 @@ class VirustotalConnector(BaseConnector):
         })
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _poll_for_result(self, action_result, scan_id, poll_interval):
-
+    def _poll_for_result(self, action_result, scan_id, poll_interval, report_type='file'):
         attempt = 1
         params = {'apikey': self._apikey, 'resource': scan_id}
+        if report_type == 'file':
+            endpoint = FILE_API_ENDPOINT
+        elif report_type == 'url':
+            endpoint = URL_API_ENDPOINT
+        else:
+            endpoint = FILE_API_ENDPOINT
+
         # Since we sleep 1 minute between each poll, the poll_interval is
         # equal to the number of attempts
         poll_attempts = poll_interval
         while attempt <= poll_attempts:
             self.save_progress("Polling attempt {0} of {1}".format(attempt, poll_attempts))
-            ret_val, json_resp = self._make_rest_call(action_result, FILE_API_ENDPOINT, params, method="post")
+            ret_val, json_resp = self._make_rest_call(action_result, endpoint, params, method="post")
             if phantom.is_fail(ret_val):
                 return ret_val
             self.debug_print(json_resp)
             if json_resp.get('response_code') == 1:
-                return self._update_action_result_for_detonate_file(action_result, json_resp)
+                return self._update_action_result_for_detonate(action_result, json_resp)
             if json_resp.get('response_code') == 0:
                 return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_RESOURCE_NOT_FOUND)
 
@@ -388,7 +395,7 @@ class VirustotalConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, "Malformed response object, missing response_code.")
 
         if response_code == 1:  # Resource found on server
-            return self._update_action_result_for_detonate_file(action_result, json_resp)
+            return self._update_action_result_for_detonate(action_result, json_resp)
         if response_code == 0:  # Not found on server
             files = {'file': (file_name, open(file_path, 'rb'))}
             params = {'apikey': self._apikey}
@@ -403,13 +410,47 @@ class VirustotalConnector(BaseConnector):
         poll_interval = int(config.get('poll_interval', 5))
         return self._poll_for_result(action_result, scan_id, poll_interval)
 
+    def _detonate_url(self, param):
+        action_result = self.add_action_result(ActionResult(param))
+        config = self.get_config()
+        params = {'apikey': self._apikey}
+        params['resource'] = param['url']
+        # the 'scan' param will tell VT to automatically
+        # queue a scan for the URL if a report is not found
+        params['scan'] = 1
+
+        # check if report already exists
+        ret_val, json_resp = self._make_rest_call(action_result, URL_API_ENDPOINT, params=params, method='post')
+        if phantom.is_fail(ret_val):
+            return ret_val
+        try:
+            response_code = json_resp['response_code']
+        except KeyError:
+            return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing response_code.')
+
+        if response_code == 1 and 'positives' in json_resp:  # Resource found on server
+            return self._update_action_result_for_detonate(action_result, json_resp)
+        if response_code == -1:
+            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_INVALID_URL)
+
+        # Not found on server, detonate now
+        try:
+            scan_id = json_resp['scan_id']
+            action_result.update_summary({'scan_id': scan_id})
+        except KeyError:
+            return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+
+        poll_interval = int(config.get('poll_interval', 5))
+        return self._poll_for_result(action_result, scan_id, poll_interval, report_type='url')
+    
     def _get_report(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
         config = self.get_config()
         scan_id = param['scan_id']
+        report_type = param['report_type']
         poll_interval = int(config.get('poll_interval', 5))
-        return self._poll_for_result(action_result, scan_id, poll_interval)
+        return self._poll_for_result(action_result, scan_id, poll_interval, report_type)
 
     def _get_file(self, param):
         """ Note: Need to have this action utilize the _make_rest_call method, but we are unable to test it with our current API key. """
@@ -556,6 +597,8 @@ class VirustotalConnector(BaseConnector):
             result = self._get_file(param)
         elif (action == self.ACTION_ID_DETONATE_FILE):
             result = self._detonate_file(param)
+        elif (action == self.ACTION_ID_DETONTATE_URL):
+            result = self._detonate_url(param)
         elif (action == self.ACTION_ID_GET_REPORT):
             result = self._get_report(param)
         elif (action == phantom.ACTION_ID_TEST_ASSET_CONNECTIVITY):
