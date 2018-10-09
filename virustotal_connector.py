@@ -580,10 +580,6 @@ class VirustotalConnector(BaseConnector):
 
         result = None
         action = self.get_action_identifier()
-        config = self.get_config()
-        self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
-        self._rate_limit = config[VIRUSTOTAL_JSON_RATE_LIMIT]
-        self._verify_ssl = config[phantom.APP_JSON_VERIFY]
 
         if (action == self.ACTION_ID_QUERY_FILE):
             result = self._query_file(param)
@@ -606,6 +602,15 @@ class VirustotalConnector(BaseConnector):
 
         return result
 
+    def _initialize_error(self, msg, exception=None):
+        if self.get_action_identifier() == phantom.ACTION_ID_TEST_ASSET_CONNECTIVITY:
+            self.save_progress(msg)
+            self.save_progress(str(exception))
+            self.set_status(phantom.APP_ERROR, "Test Connectivity Failed")
+        else:
+            self.set_status(phantom.APP_ERROR, msg, exception)
+        return phantom.APP_ERROR
+
     def finalize(self):
 
         # Init the positives
@@ -627,6 +632,28 @@ class VirustotalConnector(BaseConnector):
                 total_positives += 1
 
         self.update_summary({VIRUSTOTAL_JSON_TOTAL_POSITIVES: total_positives})
+
+    def initialize(self):
+
+        self._state = self.load_state()
+        
+        try:
+            config = self.get_config()
+        except Exception, e:
+            return phantom.APP_ERROR
+        
+        self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
+        self._verify_ssl = config[phantom.APP_JSON_VERIFY]
+
+        try:
+            self._rate_limit = config[VIRUSTOTAL_JSON_RATE_LIMIT]
+        except KeyError as ke:
+            return self._initialize_error(
+                "Rate Limit asset setting not configured! Please validate asset configuration and save", 
+                Exception('KeyError: {0}'.format(ke))
+            )
+
+        return phantom.APP_SUCCESS
 
 
 if __name__ == '__main__':
