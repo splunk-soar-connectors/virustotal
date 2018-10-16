@@ -329,8 +329,14 @@ class VirustotalConnector(BaseConnector):
     def _update_action_result_for_detonate(self, action_result, json_resp):
         action_result.add_data(json_resp)
 
+        try:
+            scan_id = json_resp['scan_id']
+        except KeyError:
+            return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
+
         # update the summary
         action_result.update_summary({
+            'scan_id': scan_id,
             VIRUSTOTAL_JSON_TOTAL_SCANS: json_resp.get('total', 0),
             VIRUSTOTAL_JSON_POSITIVES: json_resp.get('positives', 0)
         })
