@@ -40,7 +40,7 @@
         "rate_limit": {
             "description": "Limit number of requests to 4 per minute",
             "data_type": "boolean",
-            "default": true,
+            "default": false,
             "order": 3
         }
     },
