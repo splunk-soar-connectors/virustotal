@@ -4,7 +4,7 @@
 {% block widget_content %}
 
 <!-- File: virustotal_template.html
-  Copyright (c) 2014-2018 Splunk Inc.
+  Copyright (c) 2016-2018 Splunk Inc.
 
   SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
   without a valid written license from Splunk Inc. is PROHIBITED.
@@ -168,7 +168,13 @@ function on_vt_load(caller) {
       <div id="vt_results_table">
         {% for hash, det, scan in results %}
           <div class="tb-row">
-            <div class="ellipsis tb-cell vt-result-hash">{{ hash|upper }}</div>
+            <div class="ellipsis tb-cell vt-result-hash">
+              <a href="javascript:;" onclick="context_menu(this, [{'contains': ['hash', 'sha256', 'sha1', 'md5'], 'value':'{{ hash|upper }}' }], 0, {{ container.id }}, null, false);">
+                {{ hash|upper }}
+                &nbsp;
+                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+              </a>
+            </div>
             <div class="tb-cell vt-result-count">{{ det }}</div>
             <div class="tb-cell vt-result-count">{{ scan }}</div>
           </div>

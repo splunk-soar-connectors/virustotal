@@ -1,5 +1,5 @@
 # File: virustotal_connector.py
-# Copyright (c) 2014-2018 Splunk Inc.
+# Copyright (c) 2016-2018 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -24,6 +24,7 @@ import hashlib
 import requests
 from bs4 import BeautifulSoup
 import json
+import ipaddress
 
 
 class RetVal(tuple):
@@ -61,6 +62,22 @@ class VirustotalConnector(BaseConnector):
         self._rate_limit = None
         self._verify_ssl = None
 
+    def _is_ip(self, input_ip_address):
+        """ Function that checks given address and return True if address is valid IPv4 or IPV6 address.
+
+        :param input_ip_address: IP address
+        :return: status (success/failure)
+        """
+
+        ip_address_input = input_ip_address
+
+        try:
+            ipaddress.ip_address(unicode(ip_address_input))
+        except:
+            return False
+
+        return True
+
     def _process_empty_response(self, response, action_result):
 
         if (200 <= response.status_code < 205):
@@ -82,8 +99,11 @@ class VirustotalConnector(BaseConnector):
         except:
             error_text = "Cannot parse error details"
 
-        message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code,
+        if error_text:
+            message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code,
                                                                       error_text)
+        else:
+            message = "Status Code: {0}. Error:\n{1}\n".format(status_code, VIRUSTOTAL_MSG_GENERAL_ISSUE)
 
         message = message.replace('{', '{{').replace('}', '}}')
 
@@ -235,8 +255,13 @@ class VirustotalConnector(BaseConnector):
 
     def _query_ip_domain(self, param, object_name, query_url):
 
-        object_value = param[object_name]
         action_result = self.add_action_result(ActionResult(dict(param)))
+
+        # Validation for checking valid IP or not (IPV4 as well as IPV6)
+        if object_name == phantom.APP_JSON_IP and not self._is_ip(param.get(phantom.APP_JSON_IP)):
+            return action_result.set_status(phantom.APP_ERROR, 'Please provide a valid IPV4 or IPV6 address')
+
+        object_value = param[object_name]
 
         item_summary = action_result.set_summary({})
         item_summary[VIRUSTOTAL_JSON_DETECTED_URLS] = 0
@@ -378,16 +403,18 @@ class VirustotalConnector(BaseConnector):
         config = self.get_config()
         params = {'apikey': self._apikey}
         vault_id = param['vault_id']
-
         try:
-            file_info = Vault.get_file_info(vault_id=vault_id, container_id=self.get_container_id())[0]
+            file_info = Vault.get_file_info(vault_id=vault_id)[0]
             self.debug_print(file_info)
 
             file_path = file_info['path']
             file_name = file_info['name']
             file_sha256 = file_info['metadata']['sha256']
         except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(e))
+            if VIRUSTOTAL_EXPECTED_ERROR_MSG in e:
+                return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault. Invalid vault_id.")
+            else:
+                return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(e))
 
         params['resource'] = file_sha256
 
@@ -448,7 +475,7 @@ class VirustotalConnector(BaseConnector):
 
         poll_interval = int(config.get('poll_interval', 5))
         return self._poll_for_result(action_result, scan_id, poll_interval, report_type='url')
-    
+
     def _get_report(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
@@ -564,8 +591,7 @@ class VirustotalConnector(BaseConnector):
 
         ret_val, json_resp = self._make_rest_call(action_result, FILE_API_ENDPOINT, params=params)
         if phantom.is_fail(ret_val):
-            self.append_to_message(VIRUSTOTAL_MSG_CHECK_APIKEY)
-            return ret_val
+            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MSG_CHECK_APIKEY)
 
         if 'resource' in json_resp:
             self.set_status_save_progress(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
@@ -586,6 +612,10 @@ class VirustotalConnector(BaseConnector):
 
         result = None
         action = self.get_action_identifier()
+        config = self.get_config()
+        self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
+        self._rate_limit = config[VIRUSTOTAL_JSON_RATE_LIMIT]
+        self._verify_ssl = True
 
         if (action == self.ACTION_ID_QUERY_FILE):
             result = self._query_file(param)
@@ -608,15 +638,6 @@ class VirustotalConnector(BaseConnector):
 
         return result
 
-    def _initialize_error(self, msg, exception=None):
-        if self.get_action_identifier() == phantom.ACTION_ID_TEST_ASSET_CONNECTIVITY:
-            self.save_progress(msg)
-            self.save_progress(str(exception))
-            self.set_status(phantom.APP_ERROR, "Test Connectivity Failed")
-        else:
-            self.set_status(phantom.APP_ERROR, msg, exception)
-        return phantom.APP_ERROR
-
     def finalize(self):
 
         # Init the positives
@@ -638,28 +659,6 @@ class VirustotalConnector(BaseConnector):
                 total_positives += 1
 
         self.update_summary({VIRUSTOTAL_JSON_TOTAL_POSITIVES: total_positives})
-
-    def initialize(self):
-
-        self._state = self.load_state()
-        
-        try:
-            config = self.get_config()
-        except Exception, e:
-            return phantom.APP_ERROR
-        
-        self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
-        self._verify_ssl = config[phantom.APP_JSON_VERIFY]
-
-        try:
-            self._rate_limit = config[VIRUSTOTAL_JSON_RATE_LIMIT]
-        except KeyError as ke:
-            return self._initialize_error(
-                "Rate Limit asset setting not configured! Please validate asset configuration and save", 
-                Exception('KeyError: {0}'.format(ke))
-            )
-
-        return phantom.APP_SUCCESS
 
 
 if __name__ == '__main__':
