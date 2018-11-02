@@ -1,5 +1,5 @@
 # File: virustotal_consts.py
-# Copyright (c) 2014-2018 Splunk Inc.
+# Copyright (c) 2016-2018 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -11,7 +11,8 @@ VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object
 VIRUSTOTAL_MSG_CONNECTING = "Querying VirusTotal"
 VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
 VIRUSTOTAL_ERR_CONNECTIVITY_TEST = "Connectivity test failed"
-VIRUSTOTAL_MSG_CHECK_APIKEY = 'Please check your APIKEY or the network connectivity'
+VIRUSTOTAL_MSG_CHECK_APIKEY = 'Please check your API KEY or the network connectivity'
+VIRUSTOTAL_MSG_GENERAL_ISSUE = 'Either API key is wrong, network connectivity is hampered, or any other issue might have happened'
 VIRUSTOTAL_MSG_OBJECT_NOT_FOUND = '{object_name} not found in results. Not in the service database'
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
 VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = "Server returned error code: {code}. Exceeded API request rate limit. Try enabling rate limitation for this asset."
@@ -21,6 +22,7 @@ VIRUSTOTAL_SERVER_CONNECTION_ERROR = "Server connection error"
 VIRUSTOTAL_RESOURCE_NOT_FOUND = "Resource not found in VirusTotal database"
 VIRUSTOTAL_INVALID_URL = "Invalid URL specified. Please validate the input and try again"
 VIRUSTOTAL_MAX_POLLS_REACHED = "Reached max polling attempts. Try rerunning the action with the 'scan_id' parameter"
+VIRUSTOTAL_EXPECTED_ERROR_MSG = "List index out of range"
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"
