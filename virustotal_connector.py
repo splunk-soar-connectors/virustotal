@@ -257,10 +257,6 @@ class VirustotalConnector(BaseConnector):
 
         action_result = self.add_action_result(ActionResult(dict(param)))
 
-        # Validation for checking valid IP or not (IPV4 as well as IPV6)
-        if object_name == phantom.APP_JSON_IP and not self._is_ip(param.get(phantom.APP_JSON_IP)):
-            return action_result.set_status(phantom.APP_ERROR, 'Please provide a valid IPV4 or IPV6 address')
-
         object_value = param[object_name]
 
         item_summary = action_result.set_summary({})
@@ -668,12 +664,13 @@ class VirustotalConnector(BaseConnector):
     def initialize(self):
 
         self._state = self.load_state()
-        
+        self.set_validator('ipv6', self._is_ip)
+
         try:
             config = self.get_config()
-        except Exception, e:
+        except:
             return phantom.APP_ERROR
-        
+
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
         self._verify_ssl = True
 
@@ -681,7 +678,7 @@ class VirustotalConnector(BaseConnector):
             self._rate_limit = config[VIRUSTOTAL_JSON_RATE_LIMIT]
         except KeyError as ke:
             return self._initialize_error(
-                "Rate Limit asset setting not configured! Please validate asset configuration and save", 
+                "Rate Limit asset setting not configured! Please validate asset configuration and save",
                 Exception('KeyError: {0}'.format(ke))
             )
 
