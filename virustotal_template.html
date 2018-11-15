@@ -3,17 +3,11 @@
 {% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
 {% block widget_content %}
 
-<!-- 
-File: ./virustotal/virustotal_template.html
+<!-- File: virustotal_template.html
+  Copyright (c) 2016-2018 Splunk Inc.
 
-Copyright (c) Phantom Cyber Corporation, 2014-2018
-
-This unpublished material is proprietary to Phantom Cyber.
-All rights reserved. The methods and
-techniques described herein are considered trade secrets
-and/or confidential. Reproduction or distribution, in whole
-or in part, is forbidden except by express written permission
-of Phantom Cyber.
+  SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
+  without a valid written license from Splunk Inc. is PROHIBITED.
 -->
 
 <style>
@@ -174,7 +168,13 @@ function on_vt_load(caller) {
       <div id="vt_results_table">
         {% for hash, det, scan in results %}
           <div class="tb-row">
-            <div class="ellipsis tb-cell vt-result-hash">{{ hash|upper }}</div>
+            <div class="ellipsis tb-cell vt-result-hash">
+              <a href="javascript:;" onclick="context_menu(this, [{'contains': ['hash', 'sha256', 'sha1', 'md5'], 'value':'{{ hash|upper }}' }], 0, {{ container.id }}, null, false);">
+                {{ hash|upper }}
+                &nbsp;
+                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+              </a>
+            </div>
             <div class="tb-cell vt-result-count">{{ det }}</div>
             <div class="tb-cell vt-result-count">{{ scan }}</div>
           </div>
