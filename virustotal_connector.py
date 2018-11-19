@@ -675,7 +675,7 @@ class VirustotalConnector(BaseConnector):
         self._verify_ssl = True
 
         try:
-            self._rate_limit = config[VIRUSTOTAL_JSON_RATE_LIMIT]
+            self._rate_limit = config.get(VIRUSTOTAL_JSON_RATE_LIMIT, False)
         except KeyError as ke:
             return self._initialize_error(
                 "Rate Limit asset setting not configured! Please validate asset configuration and save",
