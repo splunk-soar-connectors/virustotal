@@ -1,5 +1,5 @@
 # File: virustotal_connector.py
-# Copyright (c) 2016-2018 Splunk Inc.
+# Copyright (c) 2016-2019 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -526,34 +526,41 @@ class VirustotalConnector(BaseConnector):
     def _save_file_to_vault(self, action_result, response, file_hash):
 
         # Create a tmp directory on the vault partition
-        guid = uuid.uuid4()
-        local_dir = '/vault/tmp/{}'.format(guid)
-        self.save_progress("Using temp directory: {0}".format(guid))
+        if hasattr(Vault, 'get_vault_tmp_dir'):
+            try:
+                vault_ret_dict = Vault.create_attachment(response.content, self.get_container_id())
+            except Exception as e:
+                return action_result.set_status(phantom.APP_ERROR, "Could not file to vault: {0}".format(e))
+        else:
+            guid = uuid.uuid4()
+            local_dir = '/vault/tmp/{}'.format(guid)
+            self.save_progress("Using temp directory: {0}".format(guid))
 
-        try:
-            os.makedirs(local_dir)
-        except Exception as e:
-            return action_result.set_status(phantom.APP_ERROR, "Unable to create temporary folder '/vault/tmp'.", e)
+            try:
+                os.makedirs(local_dir)
+            except Exception as e:
+                return action_result.set_status(phantom.APP_ERROR, "Unable to create temporary folder '/vault/tmp'.", e)
 
-        file_path = "{0}/{1}".format(local_dir, file_hash)
+            file_path = "{0}/{1}".format(local_dir, file_hash)
 
-        # open and download the file
-        with open(file_path, 'wb') as f:
-            f.write(response.content)
+            # open and download the file
+            with open(file_path, 'wb') as f:
+                f.write(response.content)
 
-        contains = []
-        file_ext = ''
-        magic_str = magic.from_file(file_path)
-        for regex, cur_contains, extension in self.MAGIC_FORMATS:
-            if regex.match(magic_str):
-                contains.extend(cur_contains)
-                if (not file_ext):
-                    file_ext = extension
+            contains = []
+            file_ext = ''
+            magic_str = magic.from_file(file_path)
+            for regex, cur_contains, extension in self.MAGIC_FORMATS:
+                if regex.match(magic_str):
+                    contains.extend(cur_contains)
+                    if (not file_ext):
+                        file_ext = extension
 
-        file_name = '{}{}'.format(file_hash, file_ext)
+            file_name = '{}{}'.format(file_hash, file_ext)
 
-        # move the file to the vault
-        vault_ret_dict = Vault.add_attachment(file_path, self.get_container_id(), file_name=file_name, metadata={'contains': contains})
+            # move the file to the vault
+            vault_ret_dict = Vault.add_attachment(file_path, self.get_container_id(), file_name=file_name, metadata={'contains': contains})
+
         curr_data = {}
 
         if (vault_ret_dict['succeeded']):
@@ -711,9 +718,10 @@ if __name__ == '__main__':
         password = getpass.getpass("Password: ")
 
     if (username and password):
+        login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
             print ("Accessing the Login page")
-            r = requests.get("https://127.0.0.1/login", verify=False)
+            r = requests.get(login_url, verify=False)
             csrftoken = r.cookies['csrftoken']
 
             data = dict()
@@ -723,10 +731,10 @@ if __name__ == '__main__':
 
             headers = dict()
             headers['Cookie'] = 'csrftoken=' + csrftoken
-            headers['Referer'] = 'https://127.0.0.1/login'
+            headers['Referer'] = login_url
 
             print ("Logging into Platform to get the session id")
-            r2 = requests.post("https://127.0.0.1/login", verify=False, data=data, headers=headers)
+            r2 = requests.post(login_url, verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
             print ("Unable to get session id from the platfrom. Error: " + str(e))
