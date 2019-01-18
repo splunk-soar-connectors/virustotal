@@ -526,7 +526,7 @@ class VirustotalConnector(BaseConnector):
     def _save_file_to_vault(self, action_result, response, file_hash):
 
         # Create a tmp directory on the vault partition
-        
+
         guid = uuid.uuid4()
 
         if hasattr(Vault, 'get_vault_tmp_dir'):
