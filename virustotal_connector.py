@@ -449,7 +449,7 @@ class VirustotalConnector(BaseConnector):
         params['scan'] = 1
 
         # check if report already exists
-        ret_val, json_resp = self._make_rest_call(action_result, URL_API_ENDPOINT, params=params, method='post')
+        ret_val, json_resp = self._make_rest_call(action_result, DETONATE_URL_ENDPOINT, params=params, method='post')
         if phantom.is_fail(ret_val):
             return ret_val
         try:
