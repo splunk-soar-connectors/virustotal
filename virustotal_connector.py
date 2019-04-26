@@ -407,7 +407,7 @@ class VirustotalConnector(BaseConnector):
             file_name = file_info['name']
             file_sha256 = file_info['metadata']['sha256']
         except Exception as e:
-            if VIRUSTOTAL_EXPECTED_ERROR_MSG in e:
+            if VIRUSTOTAL_EXPECTED_ERROR_MSG in str(e):
                 return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault. Invalid vault_id.")
             else:
                 return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(e))
@@ -587,7 +587,8 @@ class VirustotalConnector(BaseConnector):
 
         # Create a hash of a random string
         random_string = phantom.get_random_chars(size=10)
-        md5sum = hashlib.md5(random_string).hexdigest()
+        # Python 3 hashlib requires bytes when hashing
+        md5sum = hashlib.md5(random_string.encode('utf-8')).hexdigest()
 
         params = {'resource': md5sum, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
@@ -598,11 +599,12 @@ class VirustotalConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MSG_CHECK_APIKEY)
 
         if 'resource' in json_resp:
-            self.set_status_save_progress(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
+            action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
         else:
-            self.set_status_save_progress(phantom.APP_ERROR, VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
+            action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
 
-        return self.get_status()
+        self.save_progress(action_result.get_message())
+        return action_result.get_status()
 
     def handle_action(self, param):
         """Function that handles all the actions
@@ -695,10 +697,10 @@ class VirustotalConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
+    # import pudb
     import argparse
 
-    pudb.set_trace()
+    # pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
 
