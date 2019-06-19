@@ -25,6 +25,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import ipaddress
+import calendar
 
 
 class RetVal(tuple):
@@ -243,7 +244,7 @@ class VirustotalConnector(BaseConnector):
         if not timestamp:
             epoch = int(time.time())
         else:
-            epoch = int(time.mktime(time.strptime(timestamp, '%a, %d %b %Y %H:%M:%S GMT')))
+            epoch = int(calendar.timegm(time.strptime(timestamp, '%a, %d %b %Y %H:%M:%S GMT')))
 
         state = self.load_state()
         timestamps = state.get('rate_limit_timestamps', [])
