@@ -698,10 +698,10 @@ class VirustotalConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    # import pudb
+    import pudb
     import argparse
 
-    # pudb.set_trace()
+    pudb.set_trace()
 
     argparser = argparse.ArgumentParser()
 
