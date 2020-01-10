@@ -1,5 +1,5 @@
 # File: virustotal_connector.py
-# Copyright (c) 2016-2019 Splunk Inc.
+# Copyright (c) 2016-2020 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -25,6 +25,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import ipaddress
+import calendar
 
 
 class RetVal(tuple):
@@ -243,7 +244,7 @@ class VirustotalConnector(BaseConnector):
         if not timestamp:
             epoch = int(time.time())
         else:
-            epoch = int(time.mktime(time.strptime(timestamp, '%a, %d %b %Y %H:%M:%S GMT')))
+            epoch = int(calendar.timegm(time.strptime(timestamp, '%a, %d %b %Y %H:%M:%S GMT')))
 
         state = self.load_state()
         timestamps = state.get('rate_limit_timestamps', [])
