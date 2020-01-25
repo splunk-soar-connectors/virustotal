@@ -1,5 +1,5 @@
 # File: virustotal_connector.py
-# Copyright (c) 2016-2019 Splunk Inc.
+# Copyright (c) 2016-2020 Splunk Inc.
 #
 # SPLUNK CONFIDENTIAL - Use or disclosure of this material in whole or in part
 # without a valid written license from Splunk Inc. is PROHIBITED.
@@ -25,6 +25,7 @@ import requests
 from bs4 import BeautifulSoup
 import json
 import ipaddress
+import calendar
 
 
 class RetVal(tuple):
@@ -243,7 +244,7 @@ class VirustotalConnector(BaseConnector):
         if not timestamp:
             epoch = int(time.time())
         else:
-            epoch = int(time.mktime(time.strptime(timestamp, '%a, %d %b %Y %H:%M:%S GMT')))
+            epoch = int(calendar.timegm(time.strptime(timestamp, '%a, %d %b %Y %H:%M:%S GMT')))
 
         state = self.load_state()
         timestamps = state.get('rate_limit_timestamps', [])
@@ -407,7 +408,7 @@ class VirustotalConnector(BaseConnector):
             file_name = file_info['name']
             file_sha256 = file_info['metadata']['sha256']
         except Exception as e:
-            if VIRUSTOTAL_EXPECTED_ERROR_MSG in e:
+            if VIRUSTOTAL_EXPECTED_ERROR_MSG in str(e):
                 return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault. Invalid vault_id.")
             else:
                 return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(e))
@@ -587,7 +588,8 @@ class VirustotalConnector(BaseConnector):
 
         # Create a hash of a random string
         random_string = phantom.get_random_chars(size=10)
-        md5sum = hashlib.md5(random_string).hexdigest()
+        # Python 3 hashlib requires bytes when hashing
+        md5sum = hashlib.md5(random_string.encode('utf-8')).hexdigest()
 
         params = {'resource': md5sum, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
@@ -598,11 +600,12 @@ class VirustotalConnector(BaseConnector):
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MSG_CHECK_APIKEY)
 
         if 'resource' in json_resp:
-            self.set_status_save_progress(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
+            action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
         else:
-            self.set_status_save_progress(phantom.APP_ERROR, VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
+            action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
 
-        return self.get_status()
+        self.save_progress(action_result.get_message())
+        return action_result.get_status()
 
     def handle_action(self, param):
         """Function that handles all the actions
