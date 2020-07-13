@@ -3848,9 +3848,6 @@
                     "data_type": "string",
                     "example_values": [
                         "d98246798d0025fbfeeeae3fa0dbfc7aadc7c61b5560a51f043250b5e16b61e1"
-                    ],
-                    "contains": [
-                        "sha256"
                     ]
                 },
                 {
@@ -3879,9 +3876,6 @@
                     "data_type": "string",
                     "example_values": [
                         "169f959197cc4f23ee7fc955708b467385c85f61ae34d58c29c246e106ffa60c"
-                    ],
-                    "contains": [
-                        "sha256"
                     ]
                 },
                 {
@@ -3910,9 +3904,6 @@
                     "data_type": "string",
                     "example_values": [
                         "b84e5d161f26a8fbc34f2dd5a72c8f6660b3793e56659682c14112fd02e8a437"
-                    ],
-                    "contains": [
-                        "sha256"
                     ]
                 },
                 {
@@ -3948,10 +3939,6 @@
                     "data_type": "string",
                     "example_values": [
                         "https://test.com/url?q=http%3A%2F%2Fqlql.ru%2FFAG"
-                    ],
-                    "contains": [
-                        "url",
-                        "file name"
                     ]
                 },
                 {
@@ -3959,9 +3946,6 @@
                     "data_type": "string",
                     "example_values": [
                         "0e6db89e84666d8b620be803315c2fdd5c94f38c87000665b4870bf124aea156"
-                    ],
-                    "contains": [
-                        "sha256"
                     ]
                 },
                 {
@@ -3969,9 +3953,6 @@
                     "data_type": "string",
                     "example_values": [
                         "103.241.58.24"
-                    ],
-                    "contains": [
-                        "ip"
                     ]
                 },
                 {
@@ -4017,9 +3998,6 @@
                     "data_type": "string",
                     "example_values": [
                         "c655aa8e162e9f8935e2be8ccdb0ebfabb5696eb0e0f6e9e1b65e163082614fc"
-                    ],
-                    "contains": [
-                        "sha256"
                     ]
                 },
                 {
@@ -4048,9 +4026,6 @@
                     "data_type": "string",
                     "example_values": [
                         "908b020e301271d46a789be079e26611ce77d53f06766140248997a99c6ebd35"
-                    ],
-                    "contains": [
-                        "sha256"
                     ]
                 },
                 {
@@ -4079,9 +4054,6 @@
                     "data_type": "string",
                     "example_values": [
                         "d3f7ae7ade2d708654f54b61703dd3aa42f93be75618ccba17a4110e529e4a5c"
-                    ],
-                    "contains": [
-                        "sha256"
                     ]
                 },
                 {
