@@ -23,6 +23,8 @@ import shutil
 import hashlib
 import requests
 from bs4 import BeautifulSoup
+from bs4 import UnicodeDammit
+import sys
 import json
 import ipaddress
 import calendar
@@ -59,24 +61,69 @@ class VirustotalConnector(BaseConnector):
         # Call the BaseConnectors init first
         super(VirustotalConnector, self).__init__()
 
+        self._python_version = None
+        self._state = None
         self._apikey = None
         self._rate_limit = None
         self._verify_ssl = None
 
+    def _handle_py_ver_compat_for_input_str(self, input_str):
+
+        """
+        This method returns the encoded|original string based on the Python version.
+
+        :param input_str: Input string to be processed
+        :return: input_str (Processed input string based on following logic 'input_str - Python 3; encoded input_str -
+        Python 2')
+        """
+        try:
+            if input_str and self._python_version < 3:
+                input_str = UnicodeDammit(input_str).unicode_markup.encode('utf-8')
+        except:
+            self.debug_print("Error occurred while handling python 2to3 compatibility for the input string")
+
+        return input_str
+
+    def _get_error_message_from_exception(self, e):
+        """ This function is used to get appropriate error message from the exception.
+        :param e: Exception object
+        :return: error message
+        """
+        try:
+            if hasattr(e, 'args'):
+                if len(e.args) > 1:
+                    error_code = e.args[0]
+                    error_msg = e.args[1]
+                elif len(e.args) == 1:
+                    error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE
+                    error_msg = e.args[0]
+            else:
+                error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE
+                error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
+        except:
+            error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE
+            error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
+        try:
+            error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
+        except TypeError:
+            error_msg = "Error occurred while connecting to the VirusTotal server. Please check the asset configuration and|or the action parameters."
+        except:
+            error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
+
+        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
+
     def _is_ip(self, input_ip_address):
-        """ Function that checks given address and return True if address is valid IPv4 or IPV6 address.
+        """
+        Function that checks given address and return True if address is valid IPv4 or IPV6 address.
 
         :param input_ip_address: IP address
         :return: status (success/failure)
         """
-
         ip_address_input = input_ip_address
-
         try:
-            ipaddress.ip_address(unicode(ip_address_input))
+            ipaddress.ip_address(UnicodeDammit(ip_address_input).unicode_markup)
         except:
             return False
-
         return True
 
     def _process_empty_response(self, response, action_result):
@@ -173,7 +220,8 @@ class VirustotalConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Unsupported method: {0}".format(method)), None)
         except Exception as e:
             # Set the action_result status to error, the handler function will most probably return as is
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Handled exception: {0}".format(str(e))), None)
+            error_message = self._get_error_message_from_exception(e)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Handled exception: {0}".format(error_message)), None)
 
         # Check rate limit
         if self._rate_limit:
@@ -183,7 +231,8 @@ class VirustotalConnector(BaseConnector):
             response = request_func(url, params=params, json=body, headers=headers, files=files, verify=self._verify_ssl)
         except Exception as e:
             # Set the action_result status to error, the handler function will most probably return as is
-            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting: {0}".format(str(e))), None)
+            error_message = self._get_error_message_from_exception(e)
+            return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting: {0}".format(error_message)), None)
 
         if self._rate_limit:
             self._track_rate_limit(response.headers.get('Date'))
@@ -408,10 +457,11 @@ class VirustotalConnector(BaseConnector):
             file_name = file_info['name']
             file_sha256 = file_info['metadata']['sha256']
         except Exception as e:
-            if VIRUSTOTAL_EXPECTED_ERROR_MSG in str(e):
+            error_message = self._get_error_message_from_exception(e)
+            if VIRUSTOTAL_EXPECTED_ERROR_MSG in error_message:
                 return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault. Invalid vault_id.")
             else:
-                return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(e))
+                return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(error_message))
 
         params['resource'] = file_sha256
 
@@ -644,7 +694,7 @@ class VirustotalConnector(BaseConnector):
     def _initialize_error(self, msg, exception=None):
         if self.get_action_identifier() == phantom.ACTION_ID_TEST_ASSET_CONNECTIVITY:
             self.save_progress(msg)
-            self.save_progress(str(exception))
+            self.save_progress(self._get_error_message_from_exception(exception))
             self.set_status(phantom.APP_ERROR, "Test Connectivity Failed")
         else:
             self.set_status(phantom.APP_ERROR, msg, exception)
@@ -673,10 +723,22 @@ class VirustotalConnector(BaseConnector):
         self.update_summary({VIRUSTOTAL_JSON_TOTAL_POSITIVES: total_positives})
 
     def initialize(self):
-
+        # Load the state in initialize, use it to store data
+        # that needs to be accessed across actions
         self._state = self.load_state()
+
+        if self._state is None:
+            self._state = dict()
+
         self.set_validator('ipv6', self._is_ip)
 
+        # Fetching the Python major version
+        try:
+            self._python_version = int(sys.version_info[0])
+        except:
+            return self.set_status(phantom.APP_ERROR,
+                                   "Error occurred while getting the Phantom server's Python major version.")
+        # get the asset config
         try:
             config = self.get_config()
         except:
@@ -724,7 +786,7 @@ if __name__ == '__main__':
     if (username and password):
         login_url = BaseConnector._get_phantom_base_url() + "login"
         try:
-            print ("Accessing the Login page")
+            print("Accessing the Login page")
             r = requests.get(login_url, verify=False)
             csrftoken = r.cookies['csrftoken']
 
@@ -737,11 +799,11 @@ if __name__ == '__main__':
             headers['Cookie'] = 'csrftoken=' + csrftoken
             headers['Referer'] = login_url
 
-            print ("Logging into Platform to get the session id")
+            print("Logging into Platform to get the session id")
             r2 = requests.post(login_url, verify=False, data=data, headers=headers)
             session_id = r2.cookies['sessionid']
         except Exception as e:
-            print ("Unable to get session id from the platfrom. Error: " + str(e))
+            print("Unable to get session id from the platfrom. Error: " + str(e))
             exit(1)
 
     with open(args.input_test_json) as f:
@@ -757,6 +819,6 @@ if __name__ == '__main__':
             connector._set_csrf_info(csrftoken, headers['Referer'])
 
         ret_val = connector._handle_action(json.dumps(in_json), None)
-        print (json.dumps(json.loads(ret_val), indent=4))
+        print(json.dumps(json.loads(ret_val), indent=4))
 
     exit(0)

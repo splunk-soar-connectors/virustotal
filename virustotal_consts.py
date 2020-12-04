@@ -23,6 +23,8 @@ VIRUSTOTAL_RESOURCE_NOT_FOUND = "Resource not found in VirusTotal database"
 VIRUSTOTAL_INVALID_URL = "Invalid URL specified. Please validate the input and try again"
 VIRUSTOTAL_MAX_POLLS_REACHED = "Reached max polling attempts. Try rerunning the action with the 'scan_id' parameter"
 VIRUSTOTAL_EXPECTED_ERROR_MSG = "List index out of range"
+VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE = "Error code unavailable"
+VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"
