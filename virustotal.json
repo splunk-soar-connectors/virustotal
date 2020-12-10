@@ -29,14 +29,14 @@
         "poll_interval": {
             "description": "Number of minutes to poll for a detonation result (Default: 5)",
             "data_type": "numeric",
-            "order": 2,
+            "order": 1,
             "default": 5
         },
         "rate_limit": {
             "description": "Limit number of requests to 4 per minute",
             "data_type": "boolean",
             "default": false,
-            "order": 3
+            "order": 2
         }
     },
     "actions": [
@@ -369,15 +369,15 @@
                     ]
                 },
                 {
+                    "data_path": "action_result.data.*.scans.*.detail",
+                    "data_type": "string"
+                },
+                {
                     "data_path": "action_result.data.*.scans.*.detected",
                     "data_type": "boolean"
                 },
                 {
                     "data_path": "action_result.data.*.scans.*.result",
-                    "data_type": "string"
-                },
-                {
-                    "data_path": "action_result.data.*.scans.*.detail",
                     "data_type": "string"
                 },
                 {
