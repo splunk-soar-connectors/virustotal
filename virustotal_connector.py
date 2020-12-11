@@ -66,6 +66,7 @@ class VirustotalConnector(BaseConnector):
         self._apikey = None
         self._rate_limit = None
         self._verify_ssl = None
+        self._poll_interval = None
 
     def _handle_py_ver_compat_for_input_str(self, input_str):
 
@@ -451,7 +452,6 @@ class VirustotalConnector(BaseConnector):
     def _detonate_file(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
-        config = self.get_config()
         params = {'apikey': self._apikey}
         vault_id = param['vault_id']
         try:
@@ -492,12 +492,10 @@ class VirustotalConnector(BaseConnector):
             except KeyError:
                 return action_result.set_status(phantom.APP_ERROR, "Malformed response object, missing scan_id.")
 
-        poll_interval = int(config.get('poll_interval', 5))
-        return self._poll_for_result(action_result, scan_id, poll_interval)
+        return self._poll_for_result(action_result, scan_id, self._poll_interval)
 
     def _detonate_url(self, param):
         action_result = self.add_action_result(ActionResult(param))
-        config = self.get_config()
         params = {'apikey': self._apikey}
         params['resource'] = param['url']
         # the 'scan' param will tell VT to automatically
@@ -525,17 +523,14 @@ class VirustotalConnector(BaseConnector):
         except KeyError:
             return action_result.set_status(phantom.APP_ERROR, 'Malformed response object, missing scan_id.')
 
-        poll_interval = int(config.get('poll_interval', 5))
-        return self._poll_for_result(action_result, scan_id, poll_interval, report_type='url')
+        return self._poll_for_result(action_result, scan_id, self._poll_interval, report_type='url')
 
     def _get_report(self, param):
 
         action_result = self.add_action_result(ActionResult(param))
-        config = self.get_config()
         scan_id = param['scan_id']
         report_type = param['report_type']
-        poll_interval = int(config.get('poll_interval', 5))
-        return self._poll_for_result(action_result, scan_id, poll_interval, report_type)
+        return self._poll_for_result(action_result, scan_id, self._poll_interval, report_type)
 
     def _get_file(self, param):
         """ Note: Need to have this action utilize the _make_rest_call method, but we are unable to test it with our current API key. """
@@ -759,6 +754,14 @@ class VirustotalConnector(BaseConnector):
                 "Rate Limit asset setting not configured! Please validate asset configuration and save",
                 Exception('KeyError: {0}'.format(ke))
             )
+        try:
+            if int(config.get('poll_interval', 5)) > 0:
+                self._poll_interval = int(config.get('poll_interval', 5))
+            else:
+                return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE)
+
+        except ValueError:
+            return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE)
 
         return phantom.APP_SUCCESS
 
