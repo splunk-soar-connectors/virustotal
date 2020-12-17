@@ -9,6 +9,7 @@ import phantom.app as phantom
 from phantom.app import BaseConnector
 from phantom.app import ActionResult
 from phantom.vault import Vault
+import phantom.rules as ph_rules
 
 # THIS Connector imports
 from virustotal_consts import *
@@ -455,7 +456,9 @@ class VirustotalConnector(BaseConnector):
         params = {'apikey': self._apikey}
         vault_id = param['vault_id']
         try:
-            file_info = Vault.get_file_info(vault_id=vault_id)[0]
+            _, _, file_info = ph_rules.vault_info(container_id=self.get_container_id(),
+                                                        vault_id=vault_id)
+            file_info = list(file_info)[0]
             self.debug_print(file_info)
 
             file_path = file_info['path']
