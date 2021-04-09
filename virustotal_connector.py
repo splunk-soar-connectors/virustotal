@@ -267,10 +267,7 @@ class VirustotalConnector(BaseConnector):
         # Cleanup existing timestamp list to only have the timestamps within the last 60 seconds
         timestamps = state['rate_limit_timestamps']
         current_time = int(time.time())
-        for timestamp in timestamps:
-            time_diff = current_time - timestamp
-            if time_diff > 60:
-                timestamps.remove(timestamp)
+        timestamps = [time for time in timestamps if current_time - time <= 61]
 
         # Save new cleaned list
         self.save_state({'rate_limit_timestamps': timestamps})
