@@ -238,7 +238,9 @@ class VirustotalConnector(BaseConnector):
             response = request_func(url, params=params, json=body, headers=headers, files=files, verify=self._verify_ssl)
         except Exception as e:
             # Set the action_result status to error, the handler function will most probably return as is
+            # Adding regex to hide sensitive information from the error message
             error_message = self._get_error_message_from_exception(e)
+            error_message = re.sub(r'(apikey=)([0-9]+([a-zA-Z]+[0-9]+)+)', r'\1xxxxxxxxxxxxxxxxx', error_message)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting: {0}".format(error_message)), None)
 
         if self._rate_limit:
