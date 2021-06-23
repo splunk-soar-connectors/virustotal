@@ -4,8 +4,8 @@
     "description": "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v2 APIs",
     "type": "reputation",
     "main_module": "virustotal_connector.py",
-    "app_version": "2.0.33",
-    "utctime_updated": "2021-05-03T23:19:06.000000Z",
+    "app_version": "2.1.1",
+    "utctime_updated": "2021-06-22T19:07:01.000000Z",
     "product_vendor": "VirusTotal",
     "product_name": "VirusTotal",
     "product_version_regex": ".*",
@@ -483,9 +483,10 @@
                 }
             },
             "render": {
-                "type": "table",
+                "type": "custom",
                 "width": 12,
                 "height": 5,
+                "view": "virustotal_view.display_view",
                 "title": "Domain Reputation"
             },
             "output": [
