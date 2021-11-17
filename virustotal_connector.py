@@ -641,9 +641,9 @@ class VirustotalConnector(BaseConnector):
         # Create a hash of a random string
         random_string = phantom.get_random_chars(size=10)
         # Python 3 hashlib requires bytes when hashing
-        md5sum = hashlib.md5(random_string.encode('utf-8')).hexdigest()
+        sha256sum = hashlib.sha256(random_string.encode('utf-8')).hexdigest()
 
-        params = {'resource': md5sum, VIRUSTOTAL_JSON_APIKEY: self._apikey}
+        params = {'resource': sha256sum, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
         self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
 
