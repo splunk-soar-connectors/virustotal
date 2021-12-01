@@ -16,7 +16,7 @@
     "python_version": "3",
     "publisher": "Splunk",
     "package_name": "phantom_virustotal",
-    "fips_compliant": "true",
+    "fips_compliant": true,
     "logo": "logo_virustotal.svg",
     "logo_dark": "logo_virustotal_dark.svg",
     "license": "Copyright (c) 2016-2020 Splunk Inc.",
