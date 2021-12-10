@@ -15,30 +15,28 @@
 #
 #
 # Phantom imports
-import phantom.app as phantom
-from phantom.app import BaseConnector
-from phantom.app import ActionResult
-from phantom.vault import Vault
-import phantom.rules as ph_rules
-
-# THIS Connector imports
-from virustotal_consts import *
-
+import calendar
+import hashlib
+import ipaddress
+import json
 # Other imports used by this connector
 import os
 import re
-import uuid
-import time
-import magic
 import shutil
-import hashlib
-import requests
-from bs4 import BeautifulSoup
-from bs4 import UnicodeDammit
 import sys
-import json
-import ipaddress
-import calendar
+import time
+import uuid
+
+import magic
+import phantom.app as phantom
+import phantom.rules as ph_rules
+import requests
+from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.app import ActionResult, BaseConnector
+from phantom.vault import Vault
+
+# THIS Connector imports
+from virustotal_consts import *
 
 
 class RetVal(tuple):
@@ -82,7 +80,6 @@ class VirustotalConnector(BaseConnector):
         self._poll_interval = None
 
     def _handle_py_ver_compat_for_input_str(self, input_str):
-
         """
         This method returns the encoded|original string based on the Python version.
 
@@ -814,8 +811,9 @@ class VirustotalConnector(BaseConnector):
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
