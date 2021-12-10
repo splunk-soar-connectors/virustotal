@@ -36,6 +36,7 @@ VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE = "Error code unavailable"
 VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE = "Please provide a valid positive integer for 'Number of minutes to poll for a detonation result' parameter."
 VIRUSTOTAL_REQUESTS_PER_MINUTE_ERROR_MESSAGE = "Please provide a valid positive integer for 'Requests per minute' parameter."
+VIRUSTOTAL_ERROR_MESSAGE = "Error occurred while connecting to the VirusTotal server. Please check the asset configuration and|or the action parameters."
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"

@@ -120,7 +120,7 @@ class VirustotalConnector(BaseConnector):
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
         except TypeError:
-            error_msg = "Error occurred while connecting to the VirusTotal server. Please check the asset configuration and|or the action parameters."
+            error_msg = VIRUSTOTAL_ERROR_MESSAGE
         except:
             error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
 
@@ -199,7 +199,8 @@ class VirustotalConnector(BaseConnector):
 
         action_result.add_data(resp_json)
         message = r.text.replace('{', '{{').replace('}', '}}')
-        return RetVal( action_result.set_status( phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
+        return RetVal( action_result.set_status(
+            phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
 
     def _process_response(self, r, action_result):
 
@@ -267,7 +268,8 @@ class VirustotalConnector(BaseConnector):
         self.debug_print(response.url)
 
         if response.status_code == 204:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
+            return RetVal(action_result.set_status(
+                phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
 
         return self._process_response(response, action_result)
 
@@ -300,7 +302,9 @@ class VirustotalConnector(BaseConnector):
         if len(timestamps) >= self._requests_per_minute:
             wait_time = 61 - (current_time - min(t for t in timestamps))
 
-            self.send_progress('Rate limit check #{0}. Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
+            self.send_progress('Rate limit check #{0}. Waiting {1} seconds for rate limitation to pass and will try again.'.format(
+                count, wait_time
+                ))
             time.sleep(wait_time)
             # Use recursive call to try again
             return self._check_rate_limit(count + 1)
@@ -352,7 +356,9 @@ class VirustotalConnector(BaseConnector):
         action_result.add_data(json_resp)
 
         if 'response_code' not in json_resp:
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
+            return action_result.set_status(
+                phantom.APP_ERROR, VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value
+                )
 
         action_result.set_status(phantom.APP_SUCCESS)
 
