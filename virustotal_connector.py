@@ -302,10 +302,8 @@ class VirustotalConnector(BaseConnector):
         if len(timestamps) >= self._requests_per_minute:
             wait_time = 61 - (current_time - min(t for t in timestamps))
 
-            self.send_progress('Rate limit check #{0}. Waiting {1} seconds for rate limitation to pass and will try again.'.format(
-                count, wait_time
-                )
-            )
+            self.send_progress('Rate limit check #{0}. Waiting {1} seconds for rate \
+            limitation to pass and will try again.'.format(count, wait_time))
             time.sleep(wait_time)
             # Use recursive call to try again
             return self._check_rate_limit(count + 1)
