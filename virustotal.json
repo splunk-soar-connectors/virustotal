@@ -4,12 +4,12 @@
     "description": "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v2 APIs",
     "type": "reputation",
     "main_module": "virustotal_connector.py",
-    "app_version": "2.1.5",
+    "app_version": "2.2.0",
     "utctime_updated": "2021-12-01T00:33:21.000000Z",
     "product_vendor": "VirusTotal",
     "product_name": "VirusTotal",
     "product_version_regex": ".*",
-    "min_phantom_version": "4.10.0.40961",
+    "min_phantom_version": "5.0.0",
     "latest_tested_versions": [
         "Cloud, API v2 virustotal.com/vtapi/v2/, January 24 2020"
     ],
