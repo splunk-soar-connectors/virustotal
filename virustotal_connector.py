@@ -75,7 +75,9 @@ class VirustotalConnector(BaseConnector):
         self._python_version = None
         self._state = None
         self._apikey = None
-        self._rate_limit = None
+        # Removed the rate_limit asset configuration parameter and added request per minute parameter.
+        # self._rate_limit = None
+        self._requests_per_minute = None
         self._verify_ssl = None
         self._poll_interval = None
 
@@ -241,7 +243,11 @@ class VirustotalConnector(BaseConnector):
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Handled exception: {0}".format(error_message)), None)
 
         # Check rate limit
-        if self._rate_limit:
+        # if self._rate_limit:
+        #     self._check_rate_limit()
+
+        # if number of requests are provided by user then check for limit.
+        if self._requests_per_minute:
             self._check_rate_limit()
 
         try:
@@ -253,7 +259,9 @@ class VirustotalConnector(BaseConnector):
             error_message = re.sub(r'(apikey=)([0-9]+([a-zA-Z]+[0-9]+)+)', r'\1xxxxxxxxxxxxxxxxx', error_message)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting: {0}".format(error_message)), None)
 
-        if self._rate_limit:
+        # Replace self._rate_limit variable with self._requests_per_minute variable.
+        # if self._rate_limit:
+        if self._requests_per_minute:
             self._track_rate_limit(response.headers.get('Date'))
 
         self.debug_print(response.url)
@@ -277,15 +285,19 @@ class VirustotalConnector(BaseConnector):
             return True
 
         # Cleanup existing timestamp list to only have the timestamps within the last 60 seconds
+        # Replace the 61 to 60 seconds because it was printing the line no 300 multiple times while running test connectivity.
+        # So there should be 1 seconds difference between timestamps and waittime.
+        # Also in older version as well as virustotalv3 we have 60 seconds.
         timestamps = state['rate_limit_timestamps']
         current_time = int(time.time())
-        timestamps = [time for time in timestamps if current_time - time <= 61]
+        timestamps = [time for time in timestamps if current_time - time <= 60]
 
         # Save new cleaned list
         self.save_state({'rate_limit_timestamps': timestamps})
 
         # If there are too many within the last minute, we will wait the min_time_diff and try again
-        if len(timestamps) >= 4:
+        # if len(timestamps) >= 4:
+        if len(timestamps) >= self._requests_per_minute:
             wait_time = 61 - (current_time - min(t for t in timestamps))
 
             self.send_progress('Rate limit check #{0}. Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
@@ -555,9 +567,13 @@ class VirustotalConnector(BaseConnector):
 
         params = {json_key: file_hash, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
-        # Check rate limit
-        if self._rate_limit:
+        # if number of requests are provided by user then check for limit.
+        if self._requests_per_minute:
             self._check_rate_limit()
+
+        # # Check rate limit
+        # if self._rate_limit:
+        #     self._check_rate_limit()
 
         # Format the request with the URL and the params
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL, query_url=query_url)
@@ -567,7 +583,11 @@ class VirustotalConnector(BaseConnector):
             self.debug_print("_get_file", e)
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
 
-        if self._rate_limit:
+        # if self._rate_limit:
+        #     self._track_rate_limit(r.headers.get('Date'))
+
+        # Replace self._rate_limit variable with self._requests_per_minute variable.
+        if self._requests_per_minute:
             self._track_rate_limit(r.headers.get('Date'))
 
         self.debug_print("status_code", r.status_code)
@@ -759,13 +779,13 @@ class VirustotalConnector(BaseConnector):
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
         self._verify_ssl = True
 
-        try:
-            self._rate_limit = config.get(VIRUSTOTAL_JSON_RATE_LIMIT, False)
-        except KeyError as ke:
-            return self._initialize_error(
-                "Rate Limit asset setting not configured! Please validate asset configuration and save",
-                Exception('KeyError: {0}'.format(ke))
-            )
+        # try:
+        #     self._rate_limit = config.get(VIRUSTOTAL_JSON_RATE_LIMIT, False)
+        # except KeyError as ke:
+        #     return self._initialize_error(
+        #         "Rate Limit asset setting not configured! Please validate asset configuration and save",
+        #         Exception('KeyError: {0}'.format(ke))
+        #     )
         try:
             if int(config.get('poll_interval', 5)) > 0:
                 self._poll_interval = int(config.get('poll_interval', 5))
@@ -774,6 +794,15 @@ class VirustotalConnector(BaseConnector):
 
         except ValueError:
             return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE)
+
+        # Validate the 'requests_per_minute' parameter.
+        try:
+            if int(config.get('requests_per_minute', 0)) >= 0:
+                self._requests_per_minute = int(config.get('requests_per_minute', 0))
+            else:
+                return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_REQUESTS_PER_MINUTE_ERROR_MESSAGE)
+        except ValueError:
+            return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_REQUESTS_PER_MINUTE_ERROR_MESSAGE)
 
         return phantom.APP_SUCCESS
 

@@ -33,10 +33,9 @@
             "order": 1,
             "default": 5
         },
-        "rate_limit": {
-            "description": "Limit number of requests to 4 per minute",
-            "data_type": "boolean",
-            "default": false,
+        "requests_per_minute":{
+            "description": "Maximum number of requests per minute. For free license it can be set as 4.",
+            "data_type": "numeric",
             "order": 2
         }
     },
