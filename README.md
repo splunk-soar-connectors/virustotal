@@ -1,9 +1,12 @@
-# Splunk> Phantom
+**Playbook Backward Compatibility**
 
-Welcome to the open-source repository for Splunk> Phantom's virustotal App.
+One old asset parameter is removed and new asset parameter has been added to the asset configuration given below. Hence, it is requested to the end-user please update their existing playbooks and provide values to this new parameter to ensure the correct functioning of the playbooks created on the earlier versions of the app.
 
-Please have a look at our [Contributing Guide](https://github.com/Splunk-SOAR-Apps/.github/blob/main/.github/CONTRIBUTING.md) if you are interested in contributing, raising issues, or learning more about open-source Phantom apps.
+*   **For version 2.2.X :**
 
-## Legal and License
+    *   Test Connectivity - **requests\_per\_minute** parameter has been added
+    *   Test Connectivity - **rate\_limit** parameter has been removed.
 
-This Phantom App is licensed under the Apache 2.0 license. Please see our [Contributing Guide](https://github.com/Splunk-SOAR-Apps/.github/blob/main/.github/CONTRIBUTING.md#legal-notice) for further details.
+*   **For version 2.1.X :**
+
+    *   Test Connectivity - **rate\_limit** parameter has been added

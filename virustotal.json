@@ -34,7 +34,7 @@
             "default": 5
         },
         "requests_per_minute":{
-            "description": "Maximum number of requests per minute. For free license it can be set as 4.",
+            "description": "Maximum number of requests per minute (For public API, it can be set as 4.)",
             "data_type": "numeric",
             "order": 2
         }
