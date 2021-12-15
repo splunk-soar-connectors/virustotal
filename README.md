@@ -10,3 +10,11 @@ One old asset parameter is removed and new asset parameter has been added to the
 *   **For version 2.1.X :**
 
     *   Test Connectivity - **rate\_limit** parameter has been added
+
+### Port Information
+The app uses HTTP/ HTTPS protocol for communicating with the Virustotal server. Below are the default ports used by Splunk SOAR.
+
+SERVICE NAME | TRANSPORT PROTOCOL | PORT
+------------ | ------------------ | ----
+**http** | tcp | 80
+**https** | tcp | 443

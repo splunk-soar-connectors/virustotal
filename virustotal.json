@@ -19,7 +19,7 @@
     "fips_compliant": true,
     "logo": "logo_virustotal.svg",
     "logo_dark": "logo_virustotal_dark.svg",
-    "license": "Copyright (c) 2016-2020 Splunk Inc.",
+    "license": "Copyright (c) 2016-2021 Splunk Inc.",
     "configuration": {
         "apikey": {
             "data_type": "password",
