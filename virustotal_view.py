@@ -99,3 +99,5 @@ def display_view(provides, all_app_runs, context):
 
     if provides == 'domain reputation':
         return 'virustotal_domain_reputation.html'
+    if provides == 'ip reputation':
+        return 'virustotal_ip_reputation.html'

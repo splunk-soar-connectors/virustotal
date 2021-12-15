@@ -889,9 +889,10 @@
                 }
             },
             "render": {
-                "type": "table",
+                "type": "custom",
                 "width": 12,
                 "height": 5,
+                "view":"virustotal_view.display_view",
                 "title": "IP Reputation"
             },
             "output": [
