@@ -282,12 +282,10 @@ class VirustotalConnector(BaseConnector):
                 return None
 
             if parameter < 0:
-                action_result.set_status(phantom.APP_ERROR,
-                    "Please provide a valid non-negative integer value in the {} parameter".format(key))
+                action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_NON_NEGATIVE_INTEGER_MESSAGE.format(key=key))
                 return None
             if not allow_zero and parameter == 0:
-                action_result.set_status(phantom.APP_ERROR,
-                    "Please provide a positive integer value in the {} parameter".format(key))
+                action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_POSITIVE_INTEGER_MESSAGE.format(key=key))
                 return None
 
         return parameter

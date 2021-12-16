@@ -43,6 +43,8 @@ VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE = "Please provide a valid integer value in t
 VIRUSTOTAL_ERROR_MESSAGE = (
     "Error occurred while connecting to the VirusTotal server. Please check the asset configuration and|or the action parameters."
 )
+VIRUSTOTAL_VALIDATE_NON_NEGATIVE_INTEGER_MESSAGE = "Please provide a valid non-negative integer value in the {key} parameter"
+VIRUSTOTAL_VALIDATE_POSITIVE_INTEGER_MESSAGE = "Please provide a positive integer value in the {key} parameter"
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"
