@@ -273,22 +273,18 @@ class VirustotalConnector(BaseConnector):
         if parameter is not None:
             try:
                 if not float(parameter).is_integer():
-                    action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE.format(key=key))
-                    return None
+                    return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE.format(key=key)), None
                 parameter = int(parameter)
 
-            except:
-                action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE.format(key=key))
-                return None
+            except Exception:
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE.format(key=key)), None
 
             if parameter < 0:
-                action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_NON_NEGATIVE_INTEGER_MESSAGE.format(key=key))
-                return None
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_NON_NEGATIVE_INTEGER_MESSAGE.format(key=key)), None
             if not allow_zero and parameter == 0:
-                action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_POSITIVE_INTEGER_MESSAGE.format(key=key))
-                return None
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_POSITIVE_INTEGER_MESSAGE.format(key=key)), None
 
-        return parameter
+        return phantom.APP_SUCCESS, parameter
 
     def _check_rate_limit(self, count=1):
         """ Check to see if the rate limit is within the "4 requests per minute". Wait and check again if the request is too soon.
@@ -803,8 +799,8 @@ class VirustotalConnector(BaseConnector):
             return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE)
 
         # Validate the 'requests_per_minute' parameter.
-        self._requests_per_minute = self._validate_integers(self, config.get('requests_per_minute', 0), 'requests_per_minute')
-        if self._requests_per_minute is None:
+        ret_val, self._requests_per_minute = self._validate_integers(self, config.get('requests_per_minute'), 'requests_per_minute')
+        if phantom.is_fail(ret_val):
             return self.get_status()
 
         return phantom.APP_SUCCESS
