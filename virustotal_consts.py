@@ -39,16 +39,13 @@ VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE = "Unknown error occurred. Please check the ass
 VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE = (
     "Please provide a valid positive integer for 'Number of minutes to poll for a detonation result' parameter."
 )
-VIRUSTOTAL_REQUESTS_PER_MINUTE_ERROR_MESSAGE = (
-    "Please provide a valid non-zero positive integer value in the 'requests_per_minute' parameter."
-)
+VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE = "Please provide a valid integer value in the {key} parameter"
 VIRUSTOTAL_ERROR_MESSAGE = (
     "Error occurred while connecting to the VirusTotal server. Please check the asset configuration and|or the action parameters."
 )
 
 # Jsons used in params, result, summary etc.
 VIRUSTOTAL_JSON_APIKEY = "apikey"
-VIRUSTOTAL_JSON_RATE_LIMIT = "rate_limit"
 VIRUSTOTAL_JSON_POSITIVES = "positives"
 VIRUSTOTAL_JSON_TOTAL_SCANS = "total_scans"
 VIRUSTOTAL_JSON_TOTAL_POSITIVES = "total_positives"

@@ -114,7 +114,6 @@ and limitations under the License.
             <table class="wf-table-horizontal datatable">
                 <thead>
                     <tr>
-                        <th>IP</th>
                         <th>AS OWNER</th>
                         <th>ASN</th>
                         <th>COUNTRY</th>
@@ -125,14 +124,6 @@ and limitations under the License.
                         {%for data in result.data%}
                             <div class="results">
                                 <h4 class="wf-h4-style">IP Info</h4>
-                                <td>
-                                    <a href="javascript:;" onclick="context_menu(this, [{'contains': ['ip'], 'value':'{{ result.param.ip }}' }], 0, {{ container.id }}, null, false);">
-                                        {{ result.param.ip }}
-                                        &nbsp;
-                                        <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-                                    </a>
-                                </td>
-
                                 <td>
                                     {%if data.as_owner%}
                                         {{data.as_owner}}

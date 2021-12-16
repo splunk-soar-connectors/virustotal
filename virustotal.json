@@ -11,7 +11,7 @@
     "product_version_regex": ".*",
     "min_phantom_version": "5.0.0",
     "latest_tested_versions": [
-        "Cloud, API v2 virustotal.com/vtapi/v2/, January 24 2020"
+        "Cloud, API v2 virustotal.com/vtapi/v2/, December 16 2021"
     ],
     "python_version": "3",
     "publisher": "Splunk",
@@ -33,10 +33,11 @@
             "order": 1,
             "default": 5
         },
-        "requests_per_minute":{
+        "requests_per_minute": {
             "description": "Maximum number of requests per minute (For public API, it can be set as 4.)",
             "data_type": "numeric",
-            "order": 2
+            "order": 2,
+            "default": 4
         }
     },
     "actions": [
@@ -892,7 +893,7 @@
                 "type": "custom",
                 "width": 12,
                 "height": 5,
-                "view":"virustotal_view.display_view",
+                "view": "virustotal_view.display_view",
                 "title": "IP Reputation"
             },
             "output": [

@@ -73,8 +73,6 @@ class VirustotalConnector(BaseConnector):
         self._python_version = None
         self._state = None
         self._apikey = None
-        # Removed the rate_limit asset configuration parameter and added request per minute parameter.
-        # self._rate_limit = None
         self._requests_per_minute = None
         self._verify_ssl = None
         self._poll_interval = None
@@ -240,10 +238,6 @@ class VirustotalConnector(BaseConnector):
             error_message = self._get_error_message_from_exception(e)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Handled exception: {0}".format(error_message)), None)
 
-        # Check rate limit
-        # if self._rate_limit:
-        #     self._check_rate_limit()
-
         # if number of requests are provided by user then check for limit.
         if self._requests_per_minute:
             self._check_rate_limit()
@@ -257,8 +251,6 @@ class VirustotalConnector(BaseConnector):
             error_message = re.sub(r'(apikey=)([0-9]+([a-zA-Z]+[0-9]+)+)', r'\1xxxxxxxxxxxxxxxxx', error_message)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting: {0}".format(error_message)), None)
 
-        # Replace self._rate_limit variable with self._requests_per_minute variable.
-        # if self._rate_limit:
         if self._requests_per_minute:
             self._track_rate_limit(response.headers.get('Date'))
 
@@ -269,6 +261,36 @@ class VirustotalConnector(BaseConnector):
                 phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
 
         return self._process_response(response, action_result)
+
+    def _validate_integers(self, action_result, parameter, key, allow_zero=False):
+        """ This method is to check if the provided input parameter value
+        is a non-zero positive integer and returns the integer value of the parameter itself.
+        :param action_result: Action result or BaseConnector object
+        :param parameter: input parameter
+        :return: integer value of the parameter or None in case of failure
+        """
+
+        if parameter is not None:
+            try:
+                if not float(parameter).is_integer():
+                    action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE.format(key=key))
+                    return None
+                parameter = int(parameter)
+
+            except:
+                action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE.format(key=key))
+                return None
+
+            if parameter < 0:
+                action_result.set_status(phantom.APP_ERROR,
+                    "Please provide a valid non-negative integer value in the {} parameter".format(key))
+                return None
+            if not allow_zero and parameter == 0:
+                action_result.set_status(phantom.APP_ERROR,
+                    "Please provide a positive integer value in the {} parameter".format(key))
+                return None
+
+        return parameter
 
     def _check_rate_limit(self, count=1):
         """ Check to see if the rate limit is within the "4 requests per minute". Wait and check again if the request is too soon.
@@ -573,10 +595,6 @@ class VirustotalConnector(BaseConnector):
         if self._requests_per_minute:
             self._check_rate_limit()
 
-        # # Check rate limit
-        # if self._rate_limit:
-        #     self._check_rate_limit()
-
         # Format the request with the URL and the params
         self.save_progress(VIRUSTOTAL_MSG_CREATED_URL, query_url=query_url)
         try:
@@ -585,10 +603,6 @@ class VirustotalConnector(BaseConnector):
             self.debug_print("_get_file", e)
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
 
-        # if self._rate_limit:
-        #     self._track_rate_limit(r.headers.get('Date'))
-
-        # Replace self._rate_limit variable with self._requests_per_minute variable.
         if self._requests_per_minute:
             self._track_rate_limit(r.headers.get('Date'))
 
@@ -781,13 +795,6 @@ class VirustotalConnector(BaseConnector):
         self._apikey = config[VIRUSTOTAL_JSON_APIKEY]
         self._verify_ssl = True
 
-        # try:
-        #     self._rate_limit = config.get(VIRUSTOTAL_JSON_RATE_LIMIT, False)
-        # except KeyError as ke:
-        #     return self._initialize_error(
-        #         "Rate Limit asset setting not configured! Please validate asset configuration and save",
-        #         Exception('KeyError: {0}'.format(ke))
-        #     )
         try:
             if int(config.get('poll_interval', 5)) > 0:
                 self._poll_interval = int(config.get('poll_interval', 5))
@@ -798,13 +805,9 @@ class VirustotalConnector(BaseConnector):
             return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE)
 
         # Validate the 'requests_per_minute' parameter.
-        try:
-            if int(config.get('requests_per_minute', 0)) >= 0:
-                self._requests_per_minute = int(config.get('requests_per_minute', 0))
-            else:
-                return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_REQUESTS_PER_MINUTE_ERROR_MESSAGE)
-        except ValueError:
-            return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_REQUESTS_PER_MINUTE_ERROR_MESSAGE)
+        self._requests_per_minute = self._validate_integers(self, config.get('requests_per_minute', 0), 'requests_per_minute')
+        if self._requests_per_minute is None:
+            return self.get_status()
 
         return phantom.APP_SUCCESS
 
