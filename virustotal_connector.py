@@ -1,6 +1,6 @@
 # File: virustotal_connector.py
 #
-# Copyright (c) 2016-2020 Splunk Inc.
+# Copyright (c) 2016-2021 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,30 +15,28 @@
 #
 #
 # Phantom imports
-import phantom.app as phantom
-from phantom.app import BaseConnector
-from phantom.app import ActionResult
-from phantom.vault import Vault
-import phantom.rules as ph_rules
-
-# THIS Connector imports
-from virustotal_consts import *
-
+import calendar
+import hashlib
+import ipaddress
+import json
 # Other imports used by this connector
 import os
 import re
-import uuid
-import time
-import magic
 import shutil
-import hashlib
-import requests
-from bs4 import BeautifulSoup
-from bs4 import UnicodeDammit
 import sys
-import json
-import ipaddress
-import calendar
+import time
+import uuid
+
+import magic
+import phantom.app as phantom
+import phantom.rules as ph_rules
+import requests
+from bs4 import BeautifulSoup, UnicodeDammit
+from phantom.app import ActionResult, BaseConnector
+from phantom.vault import Vault
+
+# THIS Connector imports
+from virustotal_consts import *
 
 
 class RetVal(tuple):
@@ -75,12 +73,11 @@ class VirustotalConnector(BaseConnector):
         self._python_version = None
         self._state = None
         self._apikey = None
-        self._rate_limit = None
+        self._requests_per_minute = None
         self._verify_ssl = None
         self._poll_interval = None
 
     def _handle_py_ver_compat_for_input_str(self, input_str):
-
         """
         This method returns the encoded|original string based on the Python version.
 
@@ -118,7 +115,7 @@ class VirustotalConnector(BaseConnector):
         try:
             error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
         except TypeError:
-            error_msg = "Error occurred while connecting to the VirusTotal server. Please check the asset configuration and|or the action parameters."
+            error_msg = VIRUSTOTAL_ERROR_MESSAGE
         except:
             error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
 
@@ -197,7 +194,8 @@ class VirustotalConnector(BaseConnector):
 
         action_result.add_data(resp_json)
         message = r.text.replace('{', '{{').replace('}', '}}')
-        return RetVal( action_result.set_status( phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
+        return RetVal( action_result.set_status(
+            phantom.APP_ERROR, "Error from server, Status Code: {0} data returned: {1}".format(r.status_code, message)), resp_json)
 
     def _process_response(self, r, action_result):
 
@@ -240,8 +238,8 @@ class VirustotalConnector(BaseConnector):
             error_message = self._get_error_message_from_exception(e)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Handled exception: {0}".format(error_message)), None)
 
-        # Check rate limit
-        if self._rate_limit:
+        # if number of requests are provided by user then check for limit.
+        if self._requests_per_minute:
             self._check_rate_limit()
 
         try:
@@ -253,15 +251,40 @@ class VirustotalConnector(BaseConnector):
             error_message = re.sub(r'(apikey=)([0-9]+([a-zA-Z]+[0-9]+)+)', r'\1xxxxxxxxxxxxxxxxx', error_message)
             return RetVal(action_result.set_status(phantom.APP_ERROR, "Error connecting: {0}".format(error_message)), None)
 
-        if self._rate_limit:
+        if self._requests_per_minute:
             self._track_rate_limit(response.headers.get('Date'))
 
         self.debug_print(response.url)
 
         if response.status_code == 204:
-            return RetVal(action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
+            return RetVal(action_result.set_status(
+                phantom.APP_ERROR, VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT.format(code=response.status_code)), None)
 
         return self._process_response(response, action_result)
+
+    def _validate_integers(self, action_result, parameter, key, allow_zero=False):
+        """ This method is to check if the provided input parameter value
+        is a non-zero positive integer and returns the integer value of the parameter itself.
+        :param action_result: Action result or BaseConnector object
+        :param parameter: input parameter
+        :return: integer value of the parameter or None in case of failure
+        """
+
+        if parameter is not None:
+            try:
+                if not float(parameter).is_integer():
+                    return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE.format(key=key)), None
+                parameter = int(parameter)
+
+            except Exception:
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_INTEGER_MESSAGE.format(key=key)), None
+
+            if parameter < 0:
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_NON_NEGATIVE_INTEGER_MESSAGE.format(key=key)), None
+            if not allow_zero and parameter == 0:
+                return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_VALIDATE_POSITIVE_INTEGER_MESSAGE.format(key=key)), None
+
+        return phantom.APP_SUCCESS, parameter
 
     def _check_rate_limit(self, count=1):
         """ Check to see if the rate limit is within the "4 requests per minute". Wait and check again if the request is too soon.
@@ -277,18 +300,23 @@ class VirustotalConnector(BaseConnector):
             return True
 
         # Cleanup existing timestamp list to only have the timestamps within the last 60 seconds
+        # Replace the 61 to 60 seconds because it was printing the line no 300 multiple times while running test connectivity.
+        # So there should be 1 seconds difference between timestamps and waittime.
+        # Also in older version as well as virustotalv3 we have 60 seconds.
         timestamps = state['rate_limit_timestamps']
         current_time = int(time.time())
-        timestamps = [time for time in timestamps if current_time - time <= 61]
+        timestamps = [time for time in timestamps if current_time - time <= 60]
 
         # Save new cleaned list
         self.save_state({'rate_limit_timestamps': timestamps})
 
         # If there are too many within the last minute, we will wait the min_time_diff and try again
-        if len(timestamps) >= 4:
+        # if len(timestamps) >= 4:
+        if len(timestamps) >= self._requests_per_minute:
             wait_time = 61 - (current_time - min(t for t in timestamps))
 
-            self.send_progress('Rate limit check #{0}. Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
+            self.send_progress(
+                'Rate limit check #{0}. Waiting {1} seconds for rate limitation to pass and will try again.'.format(count, wait_time))
             time.sleep(wait_time)
             # Use recursive call to try again
             return self._check_rate_limit(count + 1)
@@ -340,7 +368,9 @@ class VirustotalConnector(BaseConnector):
         action_result.add_data(json_resp)
 
         if 'response_code' not in json_resp:
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value)
+            return action_result.set_status(
+                phantom.APP_ERROR, VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value
+            )
 
         action_result.set_status(phantom.APP_SUCCESS)
 
@@ -555,8 +585,8 @@ class VirustotalConnector(BaseConnector):
 
         params = {json_key: file_hash, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
-        # Check rate limit
-        if self._rate_limit:
+        # if number of requests are provided by user then check for limit.
+        if self._requests_per_minute:
             self._check_rate_limit()
 
         # Format the request with the URL and the params
@@ -567,7 +597,7 @@ class VirustotalConnector(BaseConnector):
             self.debug_print("_get_file", e)
             return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_SERVER_CONNECTION_ERROR, e)
 
-        if self._rate_limit:
+        if self._requests_per_minute:
             self._track_rate_limit(r.headers.get('Date'))
 
         self.debug_print("status_code", r.status_code)
@@ -760,13 +790,6 @@ class VirustotalConnector(BaseConnector):
         self._verify_ssl = True
 
         try:
-            self._rate_limit = config.get(VIRUSTOTAL_JSON_RATE_LIMIT, False)
-        except KeyError as ke:
-            return self._initialize_error(
-                "Rate Limit asset setting not configured! Please validate asset configuration and save",
-                Exception('KeyError: {0}'.format(ke))
-            )
-        try:
             if int(config.get('poll_interval', 5)) > 0:
                 self._poll_interval = int(config.get('poll_interval', 5))
             else:
@@ -775,13 +798,19 @@ class VirustotalConnector(BaseConnector):
         except ValueError:
             return self.set_status(phantom.APP_ERROR, VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE)
 
+        # Validate the 'requests_per_minute' parameter.
+        ret_val, self._requests_per_minute = self._validate_integers(self, config.get('requests_per_minute'), 'requests_per_minute')
+        if phantom.is_fail(ret_val):
+            return self.get_status()
+
         return phantom.APP_SUCCESS
 
 
 if __name__ == '__main__':
 
-    import pudb
     import argparse
+
+    import pudb
 
     pudb.set_trace()
 
