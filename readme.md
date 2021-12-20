@@ -2,7 +2,7 @@
 # VirusTotal
 
 Publisher: Splunk  
-Connector Version: 2\.2\.1  
+Connector Version: 2\.2\.2  
 Product Vendor: VirusTotal  
 Product Name: VirusTotal  
 Product Version Supported (regex): "\.\*"  
