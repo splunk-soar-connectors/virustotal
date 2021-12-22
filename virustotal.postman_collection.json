@@ -1,0 +1,382 @@
+{
+	"info": {
+		"_postman_id": "607316e5-2acd-4abc-ae53-4f6eaff855c2",
+		"name": "VirusTotal",
+		"description": "A collection of API calls for interacting with the [VirusTotal](https://virustotal.com) public API.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "Detonate File",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    let response = pm.response.json();",
+							"    var file_scan_id = response['scan_id']",
+							"    pm.collectionVariables.set(\"file_scan_id\", file_scan_id);",
+							"    var hash = response['sha1']",
+							"    pm.collectionVariables.set(\"hash\", hash);",
+							"    setTimeout(function(){}, 5000); //waiting 5 seconds for urlscan to process url",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "apikey",
+							"value": "{{apikey}}",
+							"type": "text"
+						},
+						{
+							"key": "file",
+							"type": "file",
+							"src": ""
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/file/scan",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"file",
+						"scan"
+					]
+				},
+				"description": "Select the file manually in file parameter to run \"detonate file\" action."
+			},
+			"response": []
+		},
+		{
+			"name": "File Reputation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (pm.variables.get(\"file_scan_id\") == \"\"){",
+							"    console.error(\"Please run detonate file endpoint first.\");",
+							"    throw new Error(\"No file_scan_id set in variable. Please run detonate file endpoint for set variable.\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "apikey",
+							"value": "{{apikey}}",
+							"type": "text"
+						},
+						{
+							"key": "resource",
+							"value": "{{file_scan_id}}",
+							"type": "text"
+						}
+					],
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{base_url}}/file/report",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"file",
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Detonate URL",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"if (pm.response.code == 200) {",
+							"    let response = pm.response.json();",
+							"    var url_scan_id = response['scan_id']",
+							"    pm.collectionVariables.set(\"url_scan_id\", url_scan_id);",
+							"    setTimeout(function(){}, 5000); //waiting 5 seconds for urlscan to process url",
+							"}"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "apikey",
+							"value": "{{apikey}}",
+							"type": "text"
+						},
+						{
+							"key": "url",
+							"value": "{{url}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/url/scan",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"url",
+						"scan"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "URL Reputation",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (pm.variables.get(\"url_scan_id\") == \"\"){",
+							"    console.error(\"Please run detonate url endpoint first.\");",
+							"    throw new Error(\"No url_scan_id set in variable. Please run detonate url endpoint for set the variable.\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "apikey",
+							"value": "{{apikey}}",
+							"type": "text"
+						},
+						{
+							"key": "resource",
+							"value": "{{url_scan_id}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/url/report",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"url",
+						"report"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Domain Reputation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/domain/report?domain={{domain}}&apikey={{apikey}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"domain",
+						"report"
+					],
+					"query": [
+						{
+							"key": "domain",
+							"value": "{{domain}}"
+						},
+						{
+							"key": "apikey",
+							"value": "{{apikey}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "IP Reputation",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{base_url}}/ip-address/report?ip={{ip}}&apikey={{apikey}}",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"ip-address",
+						"report"
+					],
+					"query": [
+						{
+							"key": "ip",
+							"value": "{{ip}}"
+						},
+						{
+							"key": "apikey",
+							"value": "{{apikey}}"
+						}
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Get File",
+			"event": [
+				{
+					"listen": "prerequest",
+					"script": {
+						"exec": [
+							"if (pm.variables.get(\"hash\") == \"\"){",
+							"    console.error(\"Please run detonate file endpoint first.\");",
+							"    throw new Error(\"No hash set in variable. Please run detonate file endpoint for set variable.\");",
+							"}",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "formdata",
+					"formdata": [
+						{
+							"key": "apikey",
+							"value": "{{apikey}}",
+							"type": "text"
+						},
+						{
+							"key": "hash",
+							"value": "{{hash}}",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{base_url}}/file/download",
+					"host": [
+						"{{base_url}}"
+					],
+					"path": [
+						"file",
+						"download"
+					],
+					"query": [
+						{
+							"key": "apikey",
+							"value": "{{apikey}}",
+							"disabled": true
+						},
+						{
+							"key": "hash",
+							"value": "{{sha256}}",
+							"disabled": true
+						}
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "apikey",
+			"value": ""
+		},
+		{
+			"key": "base_url",
+			"value": "https://www.virustotal.com/vtapi/v2"
+		},
+		{
+			"key": "file_scan_id",
+			"value": ""
+		},
+		{
+			"key": "url",
+			"value": "https://tines.io"
+		},
+		{
+			"key": "domain",
+			"value": "tines.io"
+		},
+		{
+			"key": "ip",
+			"value": "165.227.135.98"
+		},
+		{
+			"key": "url_scan_id",
+			"value": ""
+		},
+		{
+			"key": "hash",
+			"value": ""
+		}
+	]
+}
