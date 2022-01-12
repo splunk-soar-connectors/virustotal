@@ -20,7 +20,7 @@ VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object
 VIRUSTOTAL_MSG_CONNECTING = "Querying VirusTotal"
 VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
 VIRUSTOTAL_ERR_CONNECTIVITY_TEST = "Connectivity test failed"
-VIRUSTOTAL_MSG_CHECK_APIKEY = 'Please check your API KEY or the network connectivity'
+VIRUSTOTAL_MSG_CHECK_APIKEY = 'Please check your API KEY or the network connectivity'  # pragma: allowlist secret
 VIRUSTOTAL_MSG_GENERAL_ISSUE = 'Either API key is wrong, network connectivity is hampered, or any other issue might have happened'
 VIRUSTOTAL_MSG_OBJECT_NOT_FOUND = '{object_name} not found in results. Not in the service database'
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
@@ -47,7 +47,7 @@ VIRUSTOTAL_VALIDATE_NON_NEGATIVE_INTEGER_MESSAGE = "Please provide a valid non-n
 VIRUSTOTAL_VALIDATE_POSITIVE_INTEGER_MESSAGE = "Please provide a positive integer value in the {key} parameter"
 
 # Jsons used in params, result, summary etc.
-VIRUSTOTAL_JSON_APIKEY = "apikey"
+VIRUSTOTAL_JSON_APIKEY = "apikey"  # pragma: allowlist secret
 VIRUSTOTAL_JSON_POSITIVES = "positives"
 VIRUSTOTAL_JSON_TOTAL_SCANS = "total_scans"
 VIRUSTOTAL_JSON_TOTAL_POSITIVES = "total_positives"
