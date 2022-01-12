@@ -65,3 +65,5 @@ URL_API_ENDPOINT = 'url/report'
 DETONATE_URL_ENDPOINT = 'url/scan'
 DOMAIN_API_ENDPOINT = 'domain/report'
 IP_API_ENDPOINT = 'ip-address/report'
+
+DEFAULT_REQUEST_TIMEOUT = 30  # in seconds
