@@ -31,18 +31,18 @@ This app integrates with the VirusTotal cloud to implement investigative and rep
     playbooks and provide values to this new parameter to ensure the correct functioning of the
     playbooks created on the earlier versions of the app.
 
-      
+
 
     -   **For version 2.2.X :**
 
-          
+
 
         -   Test Connectivity - **requests_per_minute** parameter has been added
         -   Test Connectivity - **rate_limit** parameter has been removed.
 
     -   **For version 2.1.X :**
 
-          
+
 
         -   Test Connectivity - **rate_limit** parameter has been added
 
@@ -98,34 +98,34 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**hash** |  required  | File hash to query | string |  `hash`  `sha256`  `sha1`  `md5` 
+**hash** |  required  | File hash to query | string |  `hash`  `sha256`  `sha1`  `md5`
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.hash | string |  `hash`  `sha256`  `sha1`  `md5` 
-action\_result\.data\.\*\.md5 | string |  `hash`  `md5` 
-action\_result\.data\.\*\.permalink | string |  `url` 
-action\_result\.data\.\*\.positives | numeric | 
-action\_result\.data\.\*\.resource | string |  `sha1` 
-action\_result\.data\.\*\.response\_code | numeric | 
-action\_result\.data\.\*\.scan\_date | string | 
-action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id` 
-action\_result\.data\.\*\.scans\.\*\.detected | boolean | 
-action\_result\.data\.\*\.scans\.\*\.result | string | 
-action\_result\.data\.\*\.scans\.\*\.update | string | 
-action\_result\.data\.\*\.scans\.\*\.version | string | 
-action\_result\.data\.\*\.sha1 | string |  `hash`  `sha1` 
-action\_result\.data\.\*\.sha256 | string |  `hash`  `sha256` 
-action\_result\.data\.\*\.total | numeric | 
-action\_result\.data\.\*\.verbose\_msg | string | 
-action\_result\.summary\.positives | numeric | 
-action\_result\.summary\.total\_scans | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-summary\.total\_positives | numeric |   
+action\_result\.status | string |
+action\_result\.parameter\.hash | string |  `hash`  `sha256`  `sha1`  `md5`
+action\_result\.data\.\*\.md5 | string |  `hash`  `md5`
+action\_result\.data\.\*\.permalink | string |  `url`
+action\_result\.data\.\*\.positives | numeric |
+action\_result\.data\.\*\.resource | string |  `sha1`
+action\_result\.data\.\*\.response\_code | numeric |
+action\_result\.data\.\*\.scan\_date | string |
+action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id`
+action\_result\.data\.\*\.scans\.\*\.detected | boolean |
+action\_result\.data\.\*\.scans\.\*\.result | string |
+action\_result\.data\.\*\.scans\.\*\.update | string |
+action\_result\.data\.\*\.scans\.\*\.version | string |
+action\_result\.data\.\*\.sha1 | string |  `hash`  `sha1`
+action\_result\.data\.\*\.sha256 | string |  `hash`  `sha256`
+action\_result\.data\.\*\.total | numeric |
+action\_result\.data\.\*\.verbose\_msg | string |
+action\_result\.summary\.positives | numeric |
+action\_result\.summary\.total\_scans | numeric |
+action\_result\.message | string |
+summary\.total\_objects | numeric |
+summary\.total\_objects\_successful | numeric |
+summary\.total\_positives | numeric |  
 
 ## action: 'url reputation'
 Queries VirusTotal for URL info
@@ -136,34 +136,34 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**url** |  required  | URL to query | string |  `url` 
+**url** |  required  | URL to query | string |  `url`
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.url | string |  `url` 
-action\_result\.data\.\*\.filescan\_id | string | 
-action\_result\.data\.\*\.permalink | string |  `url` 
-action\_result\.data\.\*\.positives | numeric | 
-action\_result\.data\.\*\.resource | string |  `url` 
-action\_result\.data\.\*\.response\_code | numeric | 
-action\_result\.data\.\*\.scan\_date | string | 
-action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id` 
-action\_result\.data\.\*\.scans\.\*\.detail | string | 
-action\_result\.data\.\*\.scans\.\*\.detected | boolean | 
-action\_result\.data\.\*\.scans\.\*\.result | string | 
-action\_result\.data\.\*\.total | numeric | 
-action\_result\.data\.\*\.url | string |  `url` 
-action\_result\.data\.\*\.verbose\_msg | string | 
-action\_result\.summary\.detections | boolean | 
-action\_result\.summary\.found | boolean | 
-action\_result\.summary\.positives | numeric | 
-action\_result\.summary\.total\_scans | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-summary\.total\_positives | numeric |   
+action\_result\.status | string |
+action\_result\.parameter\.url | string |  `url`
+action\_result\.data\.\*\.filescan\_id | string |
+action\_result\.data\.\*\.permalink | string |  `url`
+action\_result\.data\.\*\.positives | numeric |
+action\_result\.data\.\*\.resource | string |  `url`
+action\_result\.data\.\*\.response\_code | numeric |
+action\_result\.data\.\*\.scan\_date | string |
+action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id`
+action\_result\.data\.\*\.scans\.\*\.detail | string |
+action\_result\.data\.\*\.scans\.\*\.detected | boolean |
+action\_result\.data\.\*\.scans\.\*\.result | string |
+action\_result\.data\.\*\.total | numeric |
+action\_result\.data\.\*\.url | string |  `url`
+action\_result\.data\.\*\.verbose\_msg | string |
+action\_result\.summary\.detections | boolean |
+action\_result\.summary\.found | boolean |
+action\_result\.summary\.positives | numeric |
+action\_result\.summary\.total\_scans | numeric |
+action\_result\.message | string |
+summary\.total\_objects | numeric |
+summary\.total\_objects\_successful | numeric |
+summary\.total\_positives | numeric |  
 
 ## action: 'domain reputation'
 Queries VirusTotal for domain info
@@ -174,59 +174,59 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**domain** |  required  | Domain to query | string |  `domain` 
+**domain** |  required  | Domain to query | string |  `domain`
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.domain | string |  `domain` 
-action\_result\.data\.\*\.categories | string | 
-action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.detected\_urls\.\*\.positives | numeric | 
-action\_result\.data\.\*\.detected\_urls\.\*\.scan\_date | string | 
-action\_result\.data\.\*\.detected\_urls\.\*\.total | numeric | 
-action\_result\.data\.\*\.detected\_urls\.\*\.url | string |  `url`  `file name` 
-action\_result\.data\.\*\.pcaps | string |  `sha256` 
-action\_result\.data\.\*\.resolutions\.\*\.ip\_address | string |  `ip` 
-action\_result\.data\.\*\.resolutions\.\*\.last\_resolved | string | 
-action\_result\.data\.\*\.response\_code | numeric | 
-action\_result\.data\.\*\.subdomains | string |  `domain` 
-action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.undetected\_urls\.\* | string | 
-action\_result\.data\.\*\.verbose\_msg | string | 
-action\_result\.data\.\*\.whois | string | 
-action\_result\.data\.\*\.whois\_timestamp | numeric | 
-action\_result\.summary\.alexa\_rank | numeric | 
-action\_result\.summary\.communicating\_samples | numeric | 
-action\_result\.summary\.detected\_urls | numeric | 
-action\_result\.summary\.downloaded\_samples | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-summary\.total\_positives | numeric |   
+action\_result\.status | string |
+action\_result\.parameter\.domain | string |  `domain`
+action\_result\.data\.\*\.categories | string |
+action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.date | string |
+action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.date | string |
+action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.date | string |
+action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.detected\_urls\.\*\.positives | numeric |
+action\_result\.data\.\*\.detected\_urls\.\*\.scan\_date | string |
+action\_result\.data\.\*\.detected\_urls\.\*\.total | numeric |
+action\_result\.data\.\*\.detected\_urls\.\*\.url | string |  `url`  `file name`
+action\_result\.data\.\*\.pcaps | string |  `sha256`
+action\_result\.data\.\*\.resolutions\.\*\.ip\_address | string |  `ip`
+action\_result\.data\.\*\.resolutions\.\*\.last\_resolved | string |
+action\_result\.data\.\*\.response\_code | numeric |
+action\_result\.data\.\*\.subdomains | string |  `domain`
+action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.date | string |
+action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.date | string |
+action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.date | string |
+action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.undetected\_urls\.\* | string |
+action\_result\.data\.\*\.verbose\_msg | string |
+action\_result\.data\.\*\.whois | string |
+action\_result\.data\.\*\.whois\_timestamp | numeric |
+action\_result\.summary\.alexa\_rank | numeric |
+action\_result\.summary\.communicating\_samples | numeric |
+action\_result\.summary\.detected\_urls | numeric |
+action\_result\.summary\.downloaded\_samples | numeric |
+action\_result\.message | string |
+summary\.total\_objects | numeric |
+summary\.total\_objects\_successful | numeric |
+summary\.total\_positives | numeric |  
 
 ## action: 'ip reputation'
 Queries VirusTotal for IP info
@@ -237,57 +237,57 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**ip** |  required  | IP to query | string |  `ip`  `ipv6` 
+**ip** |  required  | IP to query | string |  `ip`  `ipv6`
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.ip | string |  `ip`  `ipv6` 
-action\_result\.data\.\*\.as\_owner | string | 
-action\_result\.data\.\*\.asn | numeric | 
-action\_result\.data\.\*\.continent | string | 
-action\_result\.data\.\*\.country | string | 
-action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.detected\_urls\.\*\.positives | numeric | 
-action\_result\.data\.\*\.detected\_urls\.\*\.scan\_date | string | 
-action\_result\.data\.\*\.detected\_urls\.\*\.total | numeric | 
-action\_result\.data\.\*\.detected\_urls\.\*\.url | string |  `url`  `file name` 
-action\_result\.data\.\*\.network | string | 
-action\_result\.data\.\*\.resolutions\.\*\.hostname | string |  `host name` 
-action\_result\.data\.\*\.resolutions\.\*\.last\_resolved | string | 
-action\_result\.data\.\*\.response\_code | numeric | 
-action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.date | string | 
-action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.positives | numeric | 
-action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.sha256 | string |  `sha256` 
-action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.total | numeric | 
-action\_result\.data\.\*\.undetected\_urls\.\* | string | 
-action\_result\.data\.\*\.verbose\_msg | string | 
-action\_result\.summary\.communicating\_samples | numeric | 
-action\_result\.summary\.detected\_urls | numeric | 
-action\_result\.summary\.downloaded\_samples | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-summary\.total\_positives | numeric |   
+action\_result\.status | string |
+action\_result\.parameter\.ip | string |  `ip`  `ipv6`
+action\_result\.data\.\*\.as\_owner | string |
+action\_result\.data\.\*\.asn | numeric |
+action\_result\.data\.\*\.continent | string |
+action\_result\.data\.\*\.country | string |
+action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.date | string |
+action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.detected\_communicating\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.date | string |
+action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.detected\_downloaded\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.date | string |
+action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.detected\_referrer\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.detected\_urls\.\*\.positives | numeric |
+action\_result\.data\.\*\.detected\_urls\.\*\.scan\_date | string |
+action\_result\.data\.\*\.detected\_urls\.\*\.total | numeric |
+action\_result\.data\.\*\.detected\_urls\.\*\.url | string |  `url`  `file name`
+action\_result\.data\.\*\.network | string |
+action\_result\.data\.\*\.resolutions\.\*\.hostname | string |  `host name`
+action\_result\.data\.\*\.resolutions\.\*\.last\_resolved | string |
+action\_result\.data\.\*\.response\_code | numeric |
+action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.date | string |
+action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.undetected\_communicating\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.date | string |
+action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.undetected\_downloaded\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.positives | numeric |
+action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.sha256 | string |  `sha256`
+action\_result\.data\.\*\.undetected\_referrer\_samples\.\*\.total | numeric |
+action\_result\.data\.\*\.undetected\_urls\.\* | string |
+action\_result\.data\.\*\.verbose\_msg | string |
+action\_result\.summary\.communicating\_samples | numeric |
+action\_result\.summary\.detected\_urls | numeric |
+action\_result\.summary\.downloaded\_samples | numeric |
+action\_result\.message | string |
+summary\.total\_objects | numeric |
+summary\.total\_objects\_successful | numeric |
+summary\.total\_positives | numeric |  
 
 ## action: 'get file'
 Downloads a file from VirusTotal, and adds it to the vault
@@ -298,23 +298,23 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**hash** |  required  | Hash of file to get | string |  `hash`  `sha256`  `sha1`  `md5` 
+**hash** |  required  | Hash of file to get | string |  `hash`  `sha256`  `sha1`  `md5`
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.hash | string |  `hash`  `sha256`  `sha1`  `md5` 
-action\_result\.data\.\*\.file\_type | string | 
-action\_result\.data\.\*\.name | string |  `md5` 
-action\_result\.data\.\*\.vault\_id | string |  `vault id`  `sha1` 
-action\_result\.summary\.file\_type | string | 
-action\_result\.summary\.name | string |  `md5` 
-action\_result\.summary\.vault\_id | string |  `vault id`  `sha1` 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-summary\.total\_positives | numeric |   
+action\_result\.status | string |
+action\_result\.parameter\.hash | string |  `hash`  `sha256`  `sha1`  `md5`
+action\_result\.data\.\*\.file\_type | string |
+action\_result\.data\.\*\.name | string |  `md5`
+action\_result\.data\.\*\.vault\_id | string |  `vault id`  `sha1`
+action\_result\.summary\.file\_type | string |
+action\_result\.summary\.name | string |  `md5`
+action\_result\.summary\.vault\_id | string |  `vault id`  `sha1`
+action\_result\.message | string |
+summary\.total\_objects | numeric |
+summary\.total\_objects\_successful | numeric |
+summary\.total\_positives | numeric |  
 
 ## action: 'get report'
 Get the results using the scan id from a detonate file or detonate url action
@@ -325,39 +325,39 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**scan\_id** |  required  | Scan ID | string |  `virustotal scan id` 
-**report\_type** |  required  | Type of report to download | string | 
+**scan\_id** |  required  | Scan ID | string |  `virustotal scan id`
+**report\_type** |  required  | Type of report to download | string |
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.report\_type | string | 
-action\_result\.parameter\.scan\_id | string |  `virustotal scan id` 
-action\_result\.data\.\*\.filescan\_id | string | 
-action\_result\.data\.\*\.md5 | string |  `hash`  `md5` 
-action\_result\.data\.\*\.permalink | string |  `url` 
-action\_result\.data\.\*\.positives | numeric | 
-action\_result\.data\.\*\.resource | string | 
-action\_result\.data\.\*\.response\_code | numeric | 
-action\_result\.data\.\*\.scan\_date | string | 
-action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id` 
-action\_result\.data\.\*\.scans\.\*\.detected | boolean | 
-action\_result\.data\.\*\.scans\.\*\.result | string | 
-action\_result\.data\.\*\.scans\.\*\.update | string | 
-action\_result\.data\.\*\.scans\.\*\.version | string | 
-action\_result\.data\.\*\.sha1 | string |  `hash`  `sha1` 
-action\_result\.data\.\*\.sha256 | string |  `hash`  `sha256` 
-action\_result\.data\.\*\.total | numeric | 
-action\_result\.data\.\*\.url | string |  `url` 
-action\_result\.data\.\*\.verbose\_msg | string | 
-action\_result\.summary\.positives | numeric | 
-action\_result\.summary\.scan\_id | string | 
-action\_result\.summary\.total\_scans | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-summary\.total\_positives | numeric |   
+action\_result\.status | string |
+action\_result\.parameter\.report\_type | string |
+action\_result\.parameter\.scan\_id | string |  `virustotal scan id`
+action\_result\.data\.\*\.filescan\_id | string |
+action\_result\.data\.\*\.md5 | string |  `hash`  `md5`
+action\_result\.data\.\*\.permalink | string |  `url`
+action\_result\.data\.\*\.positives | numeric |
+action\_result\.data\.\*\.resource | string |
+action\_result\.data\.\*\.response\_code | numeric |
+action\_result\.data\.\*\.scan\_date | string |
+action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id`
+action\_result\.data\.\*\.scans\.\*\.detected | boolean |
+action\_result\.data\.\*\.scans\.\*\.result | string |
+action\_result\.data\.\*\.scans\.\*\.update | string |
+action\_result\.data\.\*\.scans\.\*\.version | string |
+action\_result\.data\.\*\.sha1 | string |  `hash`  `sha1`
+action\_result\.data\.\*\.sha256 | string |  `hash`  `sha256`
+action\_result\.data\.\*\.total | numeric |
+action\_result\.data\.\*\.url | string |  `url`
+action\_result\.data\.\*\.verbose\_msg | string |
+action\_result\.summary\.positives | numeric |
+action\_result\.summary\.scan\_id | string |
+action\_result\.summary\.total\_scans | numeric |
+action\_result\.message | string |
+summary\.total\_objects | numeric |
+summary\.total\_objects\_successful | numeric |
+summary\.total\_positives | numeric |  
 
 ## action: 'detonate file'
 Upload a file to Virus Total and retrieve the analysis results
@@ -370,35 +370,35 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**vault\_id** |  required  | The Vault ID of the file to scan | string |  `vault id`  `sha1` 
+**vault\_id** |  required  | The Vault ID of the file to scan | string |  `vault id`  `sha1`
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1` 
-action\_result\.data\.\*\.md5 | string |  `hash`  `md5` 
-action\_result\.data\.\*\.permalink | string |  `url` 
-action\_result\.data\.\*\.positives | numeric | 
-action\_result\.data\.\*\.resource | string |  `sha256` 
-action\_result\.data\.\*\.response\_code | numeric | 
-action\_result\.data\.\*\.scan\_date | string | 
-action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id` 
-action\_result\.data\.\*\.scans\.\*\.detected | boolean | 
-action\_result\.data\.\*\.scans\.\*\.result | string | 
-action\_result\.data\.\*\.scans\.\*\.update | string | 
-action\_result\.data\.\*\.scans\.\*\.version | string | 
-action\_result\.data\.\*\.sha1 | string |  `hash`  `sha1` 
-action\_result\.data\.\*\.sha256 | string |  `hash`  `sha256` 
-action\_result\.data\.\*\.total | numeric | 
-action\_result\.data\.\*\.verbose\_msg | string | 
-action\_result\.summary\.positives | numeric | 
-action\_result\.summary\.scan\_id | string |  `virustotal scan id` 
-action\_result\.summary\.total\_scans | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-summary\.total\_positives | numeric |   
+action\_result\.status | string |
+action\_result\.parameter\.vault\_id | string |  `vault id`  `sha1`
+action\_result\.data\.\*\.md5 | string |  `hash`  `md5`
+action\_result\.data\.\*\.permalink | string |  `url`
+action\_result\.data\.\*\.positives | numeric |
+action\_result\.data\.\*\.resource | string |  `sha256`
+action\_result\.data\.\*\.response\_code | numeric |
+action\_result\.data\.\*\.scan\_date | string |
+action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id`
+action\_result\.data\.\*\.scans\.\*\.detected | boolean |
+action\_result\.data\.\*\.scans\.\*\.result | string |
+action\_result\.data\.\*\.scans\.\*\.update | string |
+action\_result\.data\.\*\.scans\.\*\.version | string |
+action\_result\.data\.\*\.sha1 | string |  `hash`  `sha1`
+action\_result\.data\.\*\.sha256 | string |  `hash`  `sha256`
+action\_result\.data\.\*\.total | numeric |
+action\_result\.data\.\*\.verbose\_msg | string |
+action\_result\.summary\.positives | numeric |
+action\_result\.summary\.scan\_id | string |  `virustotal scan id`
+action\_result\.summary\.total\_scans | numeric |
+action\_result\.message | string |
+summary\.total\_objects | numeric |
+summary\.total\_objects\_successful | numeric |
+summary\.total\_positives | numeric |  
 
 ## action: 'detonate url'
 Load a URL to Virus Total and retrieve analysis results
@@ -411,29 +411,29 @@ Read only: **True**
 #### Action Parameters
 PARAMETER | REQUIRED | DESCRIPTION | TYPE | CONTAINS
 --------- | -------- | ----------- | ---- | --------
-**url** |  required  | URL to detonate | string |  `url`  `domain` 
+**url** |  required  | URL to detonate | string |  `url`  `domain`
 
 #### Action Output
 DATA PATH | TYPE | CONTAINS
 --------- | ---- | --------
-action\_result\.status | string | 
-action\_result\.parameter\.url | string |  `url`  `domain` 
-action\_result\.data\.\*\.filescan\_id | string | 
-action\_result\.data\.\*\.permalink | string |  `url` 
-action\_result\.data\.\*\.positives | numeric | 
-action\_result\.data\.\*\.resource | string |  `url` 
-action\_result\.data\.\*\.response\_code | numeric | 
-action\_result\.data\.\*\.scan\_date | string | 
-action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id` 
-action\_result\.data\.\*\.scans\.\*\.detected | boolean | 
-action\_result\.data\.\*\.scans\.\*\.result | string | 
-action\_result\.data\.\*\.total | numeric | 
-action\_result\.data\.\*\.url | string |  `url` 
-action\_result\.data\.\*\.verbose\_msg | string | 
-action\_result\.summary\.positives | numeric | 
-action\_result\.summary\.scan\_id | string |  `virustotal scan id` 
-action\_result\.summary\.total\_scans | numeric | 
-action\_result\.message | string | 
-summary\.total\_objects | numeric | 
-summary\.total\_objects\_successful | numeric | 
-summary\.total\_positives | numeric | 
+action\_result\.status | string |
+action\_result\.parameter\.url | string |  `url`  `domain`
+action\_result\.data\.\*\.filescan\_id | string |
+action\_result\.data\.\*\.permalink | string |  `url`
+action\_result\.data\.\*\.positives | numeric |
+action\_result\.data\.\*\.resource | string |  `url`
+action\_result\.data\.\*\.response\_code | numeric |
+action\_result\.data\.\*\.scan\_date | string |
+action\_result\.data\.\*\.scan\_id | string |  `virustotal scan id`
+action\_result\.data\.\*\.scans\.\*\.detected | boolean |
+action\_result\.data\.\*\.scans\.\*\.result | string |
+action\_result\.data\.\*\.total | numeric |
+action\_result\.data\.\*\.url | string |  `url`
+action\_result\.data\.\*\.verbose\_msg | string |
+action\_result\.summary\.positives | numeric |
+action\_result\.summary\.scan\_id | string |  `virustotal scan id`
+action\_result\.summary\.total\_scans | numeric |
+action\_result\.message | string |
+summary\.total\_objects | numeric |
+summary\.total\_objects\_successful | numeric |
+summary\.total\_positives | numeric |
