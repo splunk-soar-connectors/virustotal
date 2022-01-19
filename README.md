@@ -2,7 +2,7 @@
 # VirusTotal
 
 Publisher: Splunk  
-Connector Version: 2\.2\.2  
+Connector Version: 2\.2\.5  
 Product Vendor: VirusTotal  
 Product Name: VirusTotal  
 Product Version Supported (regex): "\.\*"  
@@ -10,8 +10,8 @@ Minimum Product Version: 5\.0\.0
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v2 APIs
 
-[comment]: # " File: readme.md"
-[comment]: # " Copyright (c) 2016-2021 Splunk Inc."
+[comment]: # " File: README.md"
+[comment]: # " Copyright (c) 2016-2022 Splunk Inc."
 [comment]: # ""
 [comment]: # "Licensed under the Apache License, Version 2.0 (the 'License');"
 [comment]: # "you may not use this file except in compliance with the License."

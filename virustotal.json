@@ -4,8 +4,8 @@
     "description": "This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v2 APIs",
     "type": "reputation",
     "main_module": "virustotal_connector.py",
-    "app_version": "2.2.2",
-    "utctime_updated": "2021-12-20T11:35:29.000000Z",
+    "app_version": "2.2.5",
+    "utctime_updated": "2022-01-19T00:17:38.000000Z",
     "product_vendor": "VirusTotal",
     "product_name": "VirusTotal",
     "product_version_regex": ".*",
@@ -19,7 +19,7 @@
     "fips_compliant": true,
     "logo": "logo_virustotal.svg",
     "logo_dark": "logo_virustotal_dark.svg",
-    "license": "Copyright (c) 2016-2021 Splunk Inc.",
+    "license": "Copyright (c) 2016-2022 Splunk Inc.",
     "configuration": {
         "apikey": {
             "data_type": "password",
