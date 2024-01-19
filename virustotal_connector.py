@@ -1,6 +1,6 @@
 # File: virustotal_connector.py
 #
-# Copyright (c) 2016-2022 Splunk Inc.
+# Copyright (c) 2016-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -165,7 +165,7 @@ class VirustotalConnector(BaseConnector):
             message = "Status Code: {0}. Data from server:\n{1}\n".format(status_code,
                                                                       error_text)
         else:
-            message = "Status Code: {0}. Error:\n{1}\n".format(status_code, VIRUSTOTAL_MSG_GENERAL_ISSUE)
+            message = "Status Code: {0}. Error:\n{1}\n".format(status_code, VIRUSTOTAL_MESSAGE_GENERAL_ISSUE)
 
         message = message.replace('{', '{{').replace('}', '}}')
 
@@ -226,7 +226,7 @@ class VirustotalConnector(BaseConnector):
         """ Returns 2 values, use RetVal """
 
         url = BASE_URL + endpoint
-        self.save_progress(VIRUSTOTAL_MSG_CREATED_URL, url=url)
+        self.save_progress(VIRUSTOTAL_MESSAGE_CREATED_URL, url=url)
 
         try:
             request_func = getattr(requests, method)
@@ -358,7 +358,7 @@ class VirustotalConnector(BaseConnector):
 
         params = {object_name: object_value, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
-        self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
+        self.save_progress(VIRUSTOTAL_MESSAGE_CONNECTING)
 
         ret_val, json_resp = self._make_rest_call(action_result, query_url, params=params)
         if phantom.is_fail(ret_val):
@@ -369,13 +369,13 @@ class VirustotalConnector(BaseConnector):
 
         if 'response_code' not in json_resp:
             return action_result.set_status(
-                phantom.APP_ERROR, VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED, object_name=object_name, object_value=object_value
+                phantom.APP_ERROR, VIRUSTOTAL_ERROR_MESSAGE_OBJECT_QUERIED, object_name=object_name, object_value=object_value
             )
 
         action_result.set_status(phantom.APP_SUCCESS)
 
         if json_resp['response_code'] == 0:
-            action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_MSG_OBJECT_NOT_FOUND,
+            action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_MESSAGE_OBJECT_NOT_FOUND,
                                      object_name=object_name.capitalize())
 
         if 'Alexa rank' in json_resp:
@@ -400,7 +400,7 @@ class VirustotalConnector(BaseConnector):
         params = {'resource': object_value, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
         # Format the request with the URL and the params
-        self.save_progress(VIRUSTOTAL_MSG_CREATED_URL, query_url=query_url)
+        self.save_progress(VIRUSTOTAL_MESSAGE_CREATED_URL, query_url=query_url)
 
         ret_val, json_resp = self._make_rest_call(action_result, query_url, params=params)
         if phantom.is_fail(ret_val):
@@ -415,28 +415,28 @@ class VirustotalConnector(BaseConnector):
 
         return action_result.set_status(phantom.APP_SUCCESS)
 
-    def _query_url(self, param):
+    def _lookup_url(self, param):
 
         json_key = phantom.APP_JSON_URL
         query_url = URL_API_ENDPOINT
 
         return self._query_file_url(param, json_key, query_url)
 
-    def _query_file(self, param):
+    def _lookup_file(self, param):
 
         json_key = phantom.APP_JSON_HASH
         query_url = FILE_API_ENDPOINT
 
         return self._query_file_url(param, json_key, query_url)
 
-    def _query_ip(self, param):
+    def _lookup_ip(self, param):
 
         query_url = IP_API_ENDPOINT
         object_name = phantom.APP_JSON_IP
 
         return self._query_ip_domain(param, object_name, query_url)
 
-    def _query_domain(self, param):
+    def _lookup_domain(self, param):
 
         query_url = DOMAIN_API_ENDPOINT
         object_name = phantom.APP_JSON_DOMAIN
@@ -505,7 +505,7 @@ class VirustotalConnector(BaseConnector):
             file_sha256 = file_info['metadata']['sha256']
         except Exception as e:
             error_message = self._get_error_message_from_exception(e)
-            if VIRUSTOTAL_EXPECTED_ERROR_MSG in error_message:
+            if VIRUSTOTAL_EXPECTED_ERROR_MESSAGE in error_message:
                 return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault. Invalid vault_id.")
             else:
                 return action_result.set_status(phantom.APP_ERROR, "Unable to retrieve file from vault: {0}".format(error_message))
@@ -590,7 +590,7 @@ class VirustotalConnector(BaseConnector):
             self._check_rate_limit()
 
         # Format the request with the URL and the params
-        self.save_progress(VIRUSTOTAL_MSG_CREATED_URL, query_url=query_url)
+        self.save_progress(VIRUSTOTAL_MESSAGE_CREATED_URL, query_url=query_url)
         try:
             r = requests.get(query_url, params=params, verify=self._verify_ssl, timeout=DEFAULT_REQUEST_TIMEOUT)
         except Exception as e:
@@ -685,16 +685,16 @@ class VirustotalConnector(BaseConnector):
 
         params = {'resource': sha256sum, VIRUSTOTAL_JSON_APIKEY: self._apikey}
 
-        self.save_progress(VIRUSTOTAL_MSG_CONNECTING)
+        self.save_progress(VIRUSTOTAL_MESSAGE_CONNECTING)
 
         ret_val, json_resp = self._make_rest_call(action_result, FILE_API_ENDPOINT, params=params)
         if phantom.is_fail(ret_val):
-            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MSG_CHECK_APIKEY)
+            return action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_MESSAGE_CHECK_APIKEY)
 
         if 'resource' in json_resp:
             action_result.set_status(phantom.APP_SUCCESS, VIRUSTOTAL_SUCC_CONNECTIVITY_TEST)
         else:
-            action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERR_CONNECTIVITY_TEST)
+            action_result.set_status(phantom.APP_ERROR, VIRUSTOTAL_ERROR_CONNECTIVITY_TEST)
 
         self.save_progress(action_result.get_message())
         return action_result.get_status()
@@ -713,13 +713,13 @@ class VirustotalConnector(BaseConnector):
         action = self.get_action_identifier()
 
         if (action == self.ACTION_ID_QUERY_FILE):
-            result = self._query_file(param)
+            result = self._lookup_file(param)
         elif (action == self.ACTION_ID_QUERY_URL):
-            result = self._query_url(param)
+            result = self._lookup_url(param)
         elif (action == self.ACTION_ID_QUERY_DOMAIN):
-            result = self._query_domain(param)
+            result = self._lookup_domain(param)
         elif (action == self.ACTION_ID_QUERY_IP):
-            result = self._query_ip(param)
+            result = self._lookup_ip(param)
         elif (action == self.ACTION_ID_GET_FILE):
             result = self._get_file(param)
         elif (action == self.ACTION_ID_DETONATE_FILE):
