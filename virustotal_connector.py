@@ -102,24 +102,24 @@ class VirustotalConnector(BaseConnector):
             if hasattr(e, 'args'):
                 if len(e.args) > 1:
                     error_code = e.args[0]
-                    error_msg = e.args[1]
+                    error_message = e.args[1]
                 elif len(e.args) == 1:
                     error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE
-                    error_msg = e.args[0]
+                    error_message = e.args[0]
             else:
                 error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE
-                error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
+                error_message = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
         except:
             error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE
-            error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
+            error_message = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
         try:
-            error_msg = self._handle_py_ver_compat_for_input_str(error_msg)
+            error_message = self._handle_py_ver_compat_for_input_str(error_message)
         except TypeError:
-            error_msg = VIRUSTOTAL_ERROR_MESSAGE
+            error_message = VIRUSTOTAL_ERROR_MESSAGE
         except:
-            error_msg = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
+            error_message = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
 
-        return "Error Code: {0}. Error Message: {1}".format(error_code, error_msg)
+        return "Error Code: {0}. Error Message: {1}".format(error_code, error_message)
 
     def _is_ip(self, input_ip_address):
         """
