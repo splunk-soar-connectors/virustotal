@@ -1,6 +1,6 @@
 # File: virustotal_consts.py
 #
-# Copyright (c) 2016-2022 Splunk Inc.
+# Copyright (c) 2016-2024 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -15,14 +15,14 @@
 #
 #
 # Status/Progress Messages
-VIRUSTOTAL_MSG_CREATED_URL = "Created Query URL: {url}"
-VIRUSTOTAL_ERR_MSG_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object_value}' failed"
-VIRUSTOTAL_MSG_CONNECTING = "Querying VirusTotal"
+VIRUSTOTAL_MESSAGE_CREATED_URL = "Created Query URL: {url}"
+VIRUSTOTAL_ERROR_MESSAGE_OBJECT_QUERIED = "VirusTotal query for {object_name} '{object_value}' failed"
+VIRUSTOTAL_MESSAGE_CONNECTING = "Querying VirusTotal"
 VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
-VIRUSTOTAL_ERR_CONNECTIVITY_TEST = "Connectivity test failed"
-VIRUSTOTAL_MSG_CHECK_APIKEY = 'Please check your API KEY or the network connectivity'  # pragma: allowlist secret
-VIRUSTOTAL_MSG_GENERAL_ISSUE = 'Either API key is wrong, network connectivity is hampered, or any other issue might have happened'
-VIRUSTOTAL_MSG_OBJECT_NOT_FOUND = '{object_name} not found in results. Not in the service database'
+VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Connectivity test failed"
+VIRUSTOTAL_MESSAGE_CHECK_APIKEY = 'Please check your API KEY or the network connectivity'  # pragma: allowlist secret
+VIRUSTOTAL_MESSAGE_GENERAL_ISSUE = 'Either API key is wrong, network connectivity is hampered, or any other issue might have happened'
+VIRUSTOTAL_MESSAGE_OBJECT_NOT_FOUND = '{object_name} not found in results. Not in the service database'
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
 VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = (
     "Server returned error code: {code}. Exceeded API request rate limit. Try enabling rate limitation for this asset."
@@ -33,7 +33,7 @@ VIRUSTOTAL_SERVER_CONNECTION_ERROR = "Server connection error"
 VIRUSTOTAL_RESOURCE_NOT_FOUND = "Resource not found in VirusTotal database"
 VIRUSTOTAL_INVALID_URL = "Invalid URL specified. Please validate the input and try again"
 VIRUSTOTAL_MAX_POLLS_REACHED = "Reached max polling attempts. Try rerunning the action with the 'scan_id' parameter"
-VIRUSTOTAL_EXPECTED_ERROR_MSG = "List index out of range"
+VIRUSTOTAL_EXPECTED_ERROR_MESSAGE = "List index out of range"
 VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE = "Error code unavailable"
 VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE = "Unknown error occurred. Please check the asset configuration and|or action parameters."
 VIRUSTOTAL_POLL_INTERVAL_ERROR_MESSAGE = (
