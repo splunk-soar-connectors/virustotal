@@ -1,6 +1,6 @@
 # File: virustotal_consts.py
 #
-# Copyright (c) 2016-2024 Splunk Inc.
+# Copyright (c) 2016-2025 Splunk Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -20,9 +20,9 @@ VIRUSTOTAL_ERROR_MESSAGE_OBJECT_QUERIED = "VirusTotal query for {object_name} '{
 VIRUSTOTAL_MESSAGE_CONNECTING = "Querying VirusTotal"
 VIRUSTOTAL_SUCC_CONNECTIVITY_TEST = "Connectivity test passed"
 VIRUSTOTAL_ERROR_CONNECTIVITY_TEST = "Connectivity test failed"
-VIRUSTOTAL_MESSAGE_CHECK_APIKEY = 'Please check your API KEY or the network connectivity'  # pragma: allowlist secret
-VIRUSTOTAL_MESSAGE_GENERAL_ISSUE = 'Either API key is wrong, network connectivity is hampered, or any other issue might have happened'
-VIRUSTOTAL_MESSAGE_OBJECT_NOT_FOUND = '{object_name} not found in results. Not in the service database'
+VIRUSTOTAL_MESSAGE_CHECK_APIKEY = "Please check your API KEY or the network connectivity"  # pragma: allowlist secret
+VIRUSTOTAL_MESSAGE_GENERAL_ISSUE = "Either API key is wrong, network connectivity is hampered, or any other issue might have happened"
+VIRUSTOTAL_MESSAGE_OBJECT_NOT_FOUND = "{object_name} not found in results. Not in the service database"
 VIRUSTOTAL_SERVER_RETURNED_ERROR_CODE = "Server returned error code: {code}"
 VIRUSTOTAL_SERVER_ERROR_RATE_LIMIT = (
     "Server returned error code: {code}. Exceeded API request rate limit. Try enabling rate limitation for this asset."
@@ -57,13 +57,13 @@ VIRUSTOTAL_JSON_DOWNLOADED_SAMPLES = "downloaded_samples"
 VIRUSTOTAL_JSON_COMMUNICATING_SAMPLES = "communicating_samples"
 
 # Other constants used in the connector
-BASE_URL = 'https://www.virustotal.com/vtapi/v2/'
-FILE_API_ENDPOINT = 'file/report'
-UPLOAD_FILE_ENDPOINT = 'file/scan'
-GET_FILE_API_ENDPOINT = 'file/download'
-URL_API_ENDPOINT = 'url/report'
-DETONATE_URL_ENDPOINT = 'url/scan'
-DOMAIN_API_ENDPOINT = 'domain/report'
-IP_API_ENDPOINT = 'ip-address/report'
+BASE_URL = "https://www.virustotal.com/vtapi/v2/"
+FILE_API_ENDPOINT = "file/report"
+UPLOAD_FILE_ENDPOINT = "file/scan"
+GET_FILE_API_ENDPOINT = "file/download"
+URL_API_ENDPOINT = "url/report"
+DETONATE_URL_ENDPOINT = "url/scan"
+DOMAIN_API_ENDPOINT = "domain/report"
+IP_API_ENDPOINT = "ip-address/report"
 
 DEFAULT_REQUEST_TIMEOUT = 30  # in seconds
