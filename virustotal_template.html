@@ -1,10 +1,13 @@
 {% extends 'widgets/widget_template.html' %}
 {% load custom_template %}
-{% block custom_title_prop %}{% if title_logo %}style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"{% endif %}{% endblock %}
+{% block custom_title_prop %}
+  {% if title_logo %}
+    style="background-size: auto 60%; background-position: 50%; background-repeat: no-repeat; background-image: url('/app_resource/{{ title_logo }}');"
+  {% endif %}
+{% endblock %}
 {% block widget_content %}
-
-<!-- File: virustotal_template.html
-  Copyright (c) 2016-2024 Splunk Inc.
+  <!-- File: virustotal_template.html
+  Copyright (c) 2016-2025 Splunk Inc.
 
 Licensed under the Apache License, Version 2.0 (the "License");
 you may not use this file except in compliance with the License.
@@ -17,9 +20,7 @@ the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS
 either express or implied. See the License for the specific language governing permissions
 and limitations under the License.
 -->
-
-<style>
-
+  <style>
 #virustotal {
 }
 
@@ -127,8 +128,8 @@ and limitations under the License.
 }
 
 
-</style>
-<script>
+  </style>
+  <script>
 function on_vt_load(caller) {
   $(caller).find('[data-percentage]').each( function () {
     $(this).animate( {
@@ -136,61 +137,72 @@ function on_vt_load(caller) {
     });
   });
 }
-</script>
-<div class="vt-wrapper">
-<div id="virustotal" class="row-fluid p-t-10" onwidgetload="on_vt_load(this);" onwidgetupdate="handle_update(update_data, {{ app.id|default:'' }}, this);">
-  <div id="headers">
-    <div id="results">Results</div>
-    <div id="hash">Hash</div>
-    <div id="detections">Detections</div>
-    <div id="scanners">Scanners</div>
-  </div>
-  <div id="vt-body">
-    <div id="vt-stats">
-      <div id="headline">
-        <div id="large-pct">
-          <div id="pct-value" data-value="{{ parameters.result_summary.3.1.0 }}" animation-duration="700">{{ parameters.result_summary.3.1.0|safe_intcomma }}%</div>
-          <div id="pct-title">{{ parameters.result_summary.3.0|upper }}</div>
-          {% if parameters.percentage %}
-            <div class="progress transparent progress-small no-radius m-t-10 m-b-15" style="width:100%">
-            </div>
-          {% endif %}
-        </div>
+  </script>
+  <div class="vt-wrapper">
+    <div id="virustotal"
+         class="row-fluid p-t-10"
+         onwidgetload="on_vt_load(this);"
+         onwidgetupdate="handle_update(update_data, {{ app.id|default:'' }}, this);">
+      <div id="headers">
+        <div id="results">Results</div>
+        <div id="hash">Hash</div>
+        <div id="detections">Detections</div>
+        <div id="scanners">Scanners</div>
       </div>
-      <div id="other-stats">
-        <div>
-          <div class="item-count" data-value="{{ parameters.result_summary.0.1.0 }}" animation-duration="700">{{ parameters.result_summary.0.1.0|safe_intcomma }}</div>
-          <div class="item-title">{{ parameters.result_summary.0.0 }}</div>
-        </div>
-        <div class="vt_middle">
-          <div class="item-count" data-value="{{ parameters.result_summary.1.1.0 }}" animation-duration="700">{{ parameters.result_summary.1.1.0|safe_intcomma }}</div>
-          <div class="item-title">{{ parameters.result_summary.1.0 }}</div>
-        </div>
-        <div>
-          <div class="item-count" data-value="{{ parameters.result_summary.2.1.0 }}" animation-duration="700">{{ parameters.result_summary.2.1.0|safe_intcomma }}</div>
-          <div class="item-title">{{ parameters.result_summary.2.0 }}</div>
-        </div>
-      </div>
-    </div>
-    <div id="files">
-      <div id="vt_results_table">
-        {% for hash, det, scan in results %}
-          <div class="tb-row">
-            <div class="ellipsis tb-cell vt-result-hash">
-              <a href="javascript:;" onclick="context_menu(this, [{'contains': ['hash', 'sha256', 'sha1', 'md5'], 'value':'{{ hash|upper }}' }], 0, {{ container.id }}, null, false);">
-                {{ hash|upper }}
-                &nbsp;
-                <span class="fa fa-caret-down" style="font-size: smaller;"></span>
-              </a>
+      <div id="vt-body">
+        <div id="vt-stats">
+          <div id="headline">
+            <div id="large-pct">
+              <div id="pct-value"
+                   data-value="{{ parameters.result_summary.3.1.0 }}"
+                   animation-duration="700">{{ parameters.result_summary.3.1.0|safe_intcomma }}%</div>
+              <div id="pct-title">{{ parameters.result_summary.3.0|upper }}</div>
+              {% if parameters.percentage %}
+                <div class="progress transparent progress-small no-radius m-t-10 m-b-15"
+                     style="width:100%"></div>
+              {% endif %}
             </div>
-            <div class="tb-cell vt-result-count">{{ det }}</div>
-            <div class="tb-cell vt-result-count">{{ scan }}</div>
           </div>
-        {% endfor %}
+          <div id="other-stats">
+            <div>
+              <div class="item-count"
+                   data-value="{{ parameters.result_summary.0.1.0 }}"
+                   animation-duration="700">{{ parameters.result_summary.0.1.0|safe_intcomma }}</div>
+              <div class="item-title">{{ parameters.result_summary.0.0 }}</div>
+            </div>
+            <div class="vt_middle">
+              <div class="item-count"
+                   data-value="{{ parameters.result_summary.1.1.0 }}"
+                   animation-duration="700">{{ parameters.result_summary.1.1.0|safe_intcomma }}</div>
+              <div class="item-title">{{ parameters.result_summary.1.0 }}</div>
+            </div>
+            <div>
+              <div class="item-count"
+                   data-value="{{ parameters.result_summary.2.1.0 }}"
+                   animation-duration="700">{{ parameters.result_summary.2.1.0|safe_intcomma }}</div>
+              <div class="item-title">{{ parameters.result_summary.2.0 }}</div>
+            </div>
+          </div>
+        </div>
+        <div id="files">
+          <div id="vt_results_table">
+            {% for hash, det, scan in results %}
+              <div class="tb-row">
+                <div class="ellipsis tb-cell vt-result-hash">
+                  <a href="javascript:;"
+                     onclick="context_menu(this, [{'contains': ['hash', 'sha256', 'sha1', 'md5'], 'value':'{{ hash|upper }}' }], 0, {{ container.id }}, null, false);">
+                    {{ hash|upper }}
+                    &nbsp;
+                    <span class="fa fa-caret-down" style="font-size: smaller;"></span>
+                  </a>
+                </div>
+                <div class="tb-cell vt-result-count">{{ det }}</div>
+                <div class="tb-cell vt-result-count">{{ scan }}</div>
+              </div>
+            {% endfor %}
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
-</div>
-
 {% endblock %}
