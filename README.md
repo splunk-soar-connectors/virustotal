@@ -1,7 +1,7 @@
 # VirusTotal
 
 Publisher: Splunk \
-Connector Version: 2.2.6 \
+Connector Version: 2.2.7 \
 Product Vendor: VirusTotal \
 Product Name: VirusTotal \
 Minimum Product Version: 5.0.0
