@@ -13,7 +13,7 @@
     "latest_tested_versions": [
         "Cloud, API v2 virustotal.com/vtapi/v2/, December 16 2021"
     ],
-    "python_version": "3",
+    "python_version": ["3.9", "3.13"],
     "publisher": "Splunk",
     "package_name": "phantom_virustotal",
     "fips_compliant": true,
