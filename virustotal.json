@@ -13,7 +13,7 @@
     "latest_tested_versions": [
         "Cloud, API v2 virustotal.com/vtapi/v2/, December 16 2021"
     ],
-    "python_version": "3",
+    "python_version": "3.9, 3.13",
     "publisher": "Splunk",
     "package_name": "phantom_virustotal",
     "fips_compliant": true,
@@ -2044,11 +2044,9 @@
         }
     ],
     "pip39_dependencies": {
-        "wheel": [
-            {
-                "module": "python_magic",
-                "input_file": "wheels/shared/python_magic-0.4.18-py2.py3-none-any.whl"
-            }
-        ]
+        "wheel": []
+    },
+    "pip313_dependencies": {
+        "wheel": []
     }
 }
