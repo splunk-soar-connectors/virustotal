@@ -1,9 +1,9 @@
 # VirusTotal
 
-Publisher: Splunk \
-Connector Version: 2.2.7 \
-Product Vendor: VirusTotal \
-Product Name: VirusTotal \
+Publisher: Splunk <br>
+Connector Version: 2.2.7 <br>
+Product Vendor: VirusTotal <br>
+Product Name: VirusTotal <br>
 Minimum Product Version: 5.0.0
 
 This app integrates with the VirusTotal cloud to implement investigative and reputation actions using v2 APIs
@@ -46,21 +46,21 @@ VARIABLE | REQUIRED | TYPE | DESCRIPTION
 
 ### Supported Actions
 
-[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity \
-[file reputation](#action-file-reputation) - Queries VirusTotal for file reputation info \
-[url reputation](#action-url-reputation) - Queries VirusTotal for URL info \
-[domain reputation](#action-domain-reputation) - Queries VirusTotal for domain info \
-[ip reputation](#action-ip-reputation) - Queries VirusTotal for IP info \
-[get file](#action-get-file) - Downloads a file from VirusTotal, and adds it to the vault \
-[get report](#action-get-report) - Get the results using the scan id from a detonate file or detonate url action \
-[detonate file](#action-detonate-file) - Upload a file to Virus Total and retrieve the analysis results \
+[test connectivity](#action-test-connectivity) - Validate the asset configuration for connectivity <br>
+[file reputation](#action-file-reputation) - Queries VirusTotal for file reputation info <br>
+[url reputation](#action-url-reputation) - Queries VirusTotal for URL info <br>
+[domain reputation](#action-domain-reputation) - Queries VirusTotal for domain info <br>
+[ip reputation](#action-ip-reputation) - Queries VirusTotal for IP info <br>
+[get file](#action-get-file) - Downloads a file from VirusTotal, and adds it to the vault <br>
+[get report](#action-get-report) - Get the results using the scan id from a detonate file or detonate url action <br>
+[detonate file](#action-detonate-file) - Upload a file to Virus Total and retrieve the analysis results <br>
 [detonate url](#action-detonate-url) - Load a URL to Virus Total and retrieve analysis results
 
 ## action: 'test connectivity'
 
 Validate the asset configuration for connectivity
 
-Type: **test** \
+Type: **test** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -75,7 +75,7 @@ No Output
 
 Queries VirusTotal for file reputation info
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -116,7 +116,7 @@ summary.total_positives | numeric | | 1 |
 
 Queries VirusTotal for URL info
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -157,7 +157,7 @@ summary.total_positives | numeric | | 0 |
 
 Queries VirusTotal for domain info
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -223,7 +223,7 @@ summary.total_positives | numeric | | 0 |
 
 Queries VirusTotal for IP info
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -287,7 +287,7 @@ summary.total_positives | numeric | | 0 |
 
 Downloads a file from VirusTotal, and adds it to the vault
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -317,7 +317,7 @@ summary.total_positives | numeric | | 0 |
 
 Get the results using the scan id from a detonate file or detonate url action
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 #### Action Parameters
@@ -363,7 +363,7 @@ summary.total_positives | numeric | | 0 |
 
 Upload a file to Virus Total and retrieve the analysis results
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 <b>detonate file</b> will send a file to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a file which has already been scanned by Virus Total, it will not rescan the file but instead will return those already existing results.
@@ -407,7 +407,7 @@ summary.total_positives | numeric | | 0 |
 
 Load a URL to Virus Total and retrieve analysis results
 
-Type: **investigate** \
+Type: **investigate** <br>
 Read only: **True**
 
 <b>detonate url</b> will send a URL to Virus Total for analysis. Virus Total, however, takes an indefinite amount of time to complete this scan. This action will poll for the results for a short amount of time. If it can not get the finished results in this amount of time, it will fail and return in the summary <b>scan id</b>. This should be used with the <b>get report</b> action to finish the scan.<br>If you attempt to upload a URL which has already been scanned by Virus Total, it will not rescan the URL but instead will return those already existing results.
