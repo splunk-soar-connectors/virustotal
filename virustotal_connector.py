@@ -97,6 +97,8 @@ class VirustotalConnector(BaseConnector):
         :param e: Exception object
         :return: error message
         """
+        error_code = VIRUSTOTAL_UNKNOWN_ERROR_CODE_MESSAGE
+        error_message = VIRUSTOTAL_UNKNOWN_ERROR_MESSAGE
         try:
             if hasattr(e, "args"):
                 if len(e.args) > 1:
@@ -519,10 +521,10 @@ class VirustotalConnector(BaseConnector):
             ret_val, json_resp = self._make_rest_call(action_result, UPLOAD_FILE_ENDPOINT, params=params, files=files, method="post")
             if phantom.is_fail(ret_val):
                 return ret_val
-            try:
-                scan_id = json_resp["scan_id"]
-            except KeyError:
-                return action_result.set_status(phantom.APP_ERROR, "Malformed response object, missing scan_id.")
+        try:
+            scan_id = json_resp["scan_id"]
+        except KeyError:
+            return action_result.set_status(phantom.APP_ERROR, "Malformed response object, missing scan_id.")
 
         return self._poll_for_result(action_result, scan_id, self._poll_interval)
 

@@ -12,6 +12,7 @@
 # the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND,
 # either express or implied. See the License for the specific language governing permissions
 # and limitations under the License.
+from phantom.app import APP_JSON_HASH
 from phantom.json_keys import *
 
 from virustotal_consts import *
@@ -27,8 +28,8 @@ def file_reputation(provides, all_results, context):
         if not summary or not action_results:
             continue
         tally["total_positives"] += int(summary.get(VIRUSTOTAL_JSON_TOTAL_POSITIVES, 0))
-        tally["total_found"] += int(summary.get(APP_JSON_TOTAL_OBJECTS_SUCCESS, 0))
-        tally["total_queried"] += int(summary.get(APP_JSON_TOTAL_OBJECTS_TO_ACT_ON, 0))
+        tally["total_found"] += int(summary.get(VIRUSTOTAL_JSON_TOTAL_OBJECTS_SUCCESSFUL, 0))
+        tally["total_queried"] += int(summary.get(VIRUSTOTAL_JSON_TOTAL_OBJECTS, 0))
 
         for result in action_results:
             parameter = result.get_param()
